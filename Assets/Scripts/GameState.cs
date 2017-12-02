@@ -13,6 +13,14 @@ public class GameState : MonoBehaviour {
 
     public List<Player> Players = new List<Player>();
 
+    float _startTime = 0f;
+
+    public float TimeFromStart {
+        get {
+            return Time.time - _startTime;
+        }
+    }
+
     public int MaxMinesBeforeExplosion {
         get {
             return _maximumMines;
@@ -35,11 +43,18 @@ public class GameState : MonoBehaviour {
     }
 
     void Start() {
-        SpawnPlayers();
+        var holder = FindObjectOfType<PlayerInfoHolder>();
+        SpawnPlayers(holder.playersInfos);
     }
 
-    void SpawnPlayers() {
-
+    void SpawnPlayers(List<PlayerInfo> players) {
+        for (int i = 0; i < players.Count; i++) {
+            var controls = new InputManager();
+            controls.Init(players[i].prefix);
+            GameObject playerGo = Instantiate(PlayerPrefab, StartPoints[i].position, Quaternion.identity, null);
+            var player = playerGo.GetComponent<Player>();
+            player.Init(i, controls, players[i].color);
+        }
     }
 
     Player CreatePlayer(int index, InputManager controls, Color color) {
@@ -50,7 +65,7 @@ public class GameState : MonoBehaviour {
         return player;
     }
 
-    
+   
 
     
 
