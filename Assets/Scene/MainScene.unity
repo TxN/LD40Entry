@@ -277,7 +277,6 @@ MonoBehaviour:
   pole: {fileID: 1547067619245484, guid: 433bb6c2886da404aa8307f82b970e6c, type: 2}
   previous: {fileID: 0}
   next: {fileID: 0}
-  position: {x: 0, y: 0}
   pole1Shift: -0.5
   pole2Shift: 0.5
   pole1: {fileID: 0}
