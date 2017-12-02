@@ -11,6 +11,8 @@ public class Player : MonoBehaviour {
     public GameObject DeathPrefab = null;
     public GameObject MinePrefab = null;
 
+    public MeshRenderer ShipModel = null;
+
     InputManager _input = null;
 
     Color _shipColor = Color.white;
@@ -18,9 +20,9 @@ public class Player : MonoBehaviour {
 
     int _collectedMines = 0;
 
-    //====
+    //=========
     //Movement
-    //====
+    //=========
     float _rotationAngle = 0;
     float _moveForce = 0;
     float _initMass = 1;
@@ -61,6 +63,8 @@ public class Player : MonoBehaviour {
         if (!_isAlive) {
             return;
         }
+        EventManager.Fire<Event_PlayerDead>(new Event_PlayerDead() { Player = this, PlayerIndex = _playerIndex });
+        var deadObject = Instantiate(DeathPrefab, transform.position, Quaternion.identity);
         //Spawn death prefab and etc
     }
 
@@ -82,12 +86,15 @@ public class Player : MonoBehaviour {
         _moveForce = _input.GetMoveAcceleration();
 
         if (_input.GetLaunchTrigger() && _collectedMines > 0 ) {
-            LaunchMine();
+            LaunchMine(_input.GetLaunchDirection());
         }
     }
 
-    void LaunchMine() {
-
+    void LaunchMine(Vector2 direction) {
+        GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.5f,Quaternion.identity);
+        Mine mine = mineObj.GetComponent<Mine>();
+        mine.Spawn(direction);
+        
     }
 
     void CalcShipMass() {

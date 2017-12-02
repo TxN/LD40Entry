@@ -1,6 +1,7 @@
 ﻿namespace EventSys {
     public struct Event_PlayerDead {
         public Player Player;
+        public int PlayerIndex;
     }
 
     public struct Event_PlayerMineCollect {

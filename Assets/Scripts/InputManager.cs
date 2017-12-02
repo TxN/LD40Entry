@@ -40,15 +40,9 @@ public class InputManager : MonoBehaviour {
 		return _directionAngle;
 	}
 
-	public  float GetLaunchDirection(){
+	public  Vector2 GetLaunchDirection(){
 		Vector2 vec = new Vector2(Input.GetAxis(_launchAxisX), Input.GetAxis(_launchAxisY));
-
-		if (IsZeroAngle(vec)) {
-			return _launchAngle;
-		}
-
-		_launchAngle = Mathf.Atan2 (vec.y, vec.x);
-		return _launchAngle;
+        return vec.normalized;
 	}
 
 	public float GetMoveAcceleration (){
