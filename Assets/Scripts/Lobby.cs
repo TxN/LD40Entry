@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using UnityEngine.SceneManagement;
+
 
 public class Lobby : MonoBehaviour {
 	public GameObject playersInfosGameObject;
@@ -11,27 +11,51 @@ public class Lobby : MonoBehaviour {
 
 	public List<GameObject> JoinObjects = new List<GameObject>();
 
-	
+	PlayerInfoHolder _holder = null;
+
+
 	void Start () {
+		PlayerInfoHolder oldHolder = FindObjectOfType<PlayerInfoHolder>();
+		if ( oldHolder != null ) {
+			Destroy(oldHolder.gameObject);
+		}
+
 		playersInfosGameObject = new GameObject();
-		playersInfosGameObject.AddComponent <PlayerInfoHolder>();
+		_holder = playersInfosGameObject.AddComponent <PlayerInfoHolder>();
 	}
 	
 	
 	void Update () {
-		PlayerInfoHolder holder = playersInfosGameObject.GetComponent(typeof(PlayerInfoHolder)) as PlayerInfoHolder;
+		if (Input.GetKeyDown(KeyCode.Return)) {
+			GoToGame();
+		}
 
 		int i = 0;
 		while (i < joinKeys.Count) {
 			if (Input.GetButtonDown (joinKeys [i])) {
-				PlayerInfo info = holder.playersInfos.Find(infs => infs.prefix == joinKeysPrefixes[i]);
+				PlayerInfo info = _holder.playersInfos.Find(infs => infs.prefix == joinKeysPrefixes[i]);
 				if ( info != null ) {
-					holder.RemovePlayerInfo(info);
+					_holder.RemovePlayerInfo(info);
+					GameObject hideGO = JoinObjects.Find(objs => objs.name == joinKeysPrefixes[i]);
+					if (hideGO) {
+						hideGO.SetActive(false);
+					}
 				} else {
-					holder.AddPlayerInfo(new PlayerInfo(Random.ColorHSV(0, 1, 1, 1, 1, 1), joinKeysPrefixes[i]));
+					Color col = Random.ColorHSV(0, 1, 1, 1, 1, 1);
+					_holder.AddPlayerInfo(new PlayerInfo(col, joinKeysPrefixes[i]));
+					GameObject showGO = JoinObjects.Find(objs => objs.activeSelf == false);
+					if ( showGO ) {
+						showGO.SetActive(true);
+						showGO.name = joinKeysPrefixes[i];
+						ColorSetter.UpdateModelColor(showGO, col);
+					}
 				}
 			}
 			i++;
 		}
+	}
+
+	void GoToGame() {
+		SceneManager.LoadScene("MainScene");
 	}
 }

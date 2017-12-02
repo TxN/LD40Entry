@@ -8,6 +8,9 @@ public class Player : MonoBehaviour {
     const float MAX_ACCELERATION = 10f;
     const float MINE_DECC_PERCENT = 0.1f;
 
+	public GameObject BodyModel = null;
+	public GameObject InternalsModel = null;
+
     public GameObject DeathPrefab = null;
     public GameObject MinePrefab = null;
 
@@ -54,7 +57,7 @@ public class Player : MonoBehaviour {
         _shipColor = color;
     
  
-        UpdateModelColor();
+        ColorSetter.UpdateModelColor(BodyModel, _shipColor);
 
         EventManager.Subscribe<Event_PlayerMineCollect>(this, OnMineCollect);
     }
@@ -70,16 +73,7 @@ public class Player : MonoBehaviour {
         //Spawn death prefab and etc
     }
 
-    void UpdateModelColor() {
-        var meshes = GetComponentsInChildren<MeshRenderer>();
-        foreach (var mesh in meshes) {
-            var mats = mesh.materials;
-            var mat = mats[0];
-            mat.color = _shipColor;
-            mats[0] = mat;
-            mesh.materials = mats;
-        }
-    }
+
 
     void OnMineCollect(Event_PlayerMineCollect e) {
         if (e.playerIndex == _playerIndex) {
