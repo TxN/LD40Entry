@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInfoHolder : MonoBehaviour {
-	public List<PlayerInfo> playersInfos;
+	public List<PlayerInfo> playersInfos = new List<PlayerInfo>();
 
 	public void AddPlayerInfo(PlayerInfo player) {
 		playersInfos.Add(player);
