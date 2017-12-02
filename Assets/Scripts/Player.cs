@@ -11,8 +11,6 @@ public class Player : MonoBehaviour {
     public GameObject DeathPrefab = null;
     public GameObject MinePrefab = null;
 
-    public MeshRenderer ShipModel = null;
-
     InputManager _input = null;
 
     Color _shipColor = Color.white;
@@ -54,6 +52,8 @@ public class Player : MonoBehaviour {
         _input = controls;
         _playerIndex = index;
         _shipColor = color;
+    
+ 
         UpdateModelColor();
 
         EventManager.Subscribe<Event_PlayerMineCollect>(this, OnMineCollect);
@@ -69,7 +69,14 @@ public class Player : MonoBehaviour {
     }
 
     void UpdateModelColor() {
-        
+        var meshes = GetComponentsInChildren<MeshRenderer>();
+        foreach (var mesh in meshes) {
+            var mats = mesh.materials;
+            var mat = mats[0];
+            mat.color = _shipColor;
+            mats[0] = mat;
+            mesh.materials = mats;
+        }
     }
 
     void OnMineCollect(Event_PlayerMineCollect e) {
