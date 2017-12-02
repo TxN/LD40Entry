@@ -9,6 +9,7 @@ public class Mine : MonoBehaviour {
 
     Rigidbody2D _rb = null;
     bool _mineEnabled = false;
+    bool _appeared = false;
 
     void Spawn(Vector2 speedVector) {
         _rb = gameObject.GetComponent<Rigidbody2D>();
@@ -39,5 +40,13 @@ public class Mine : MonoBehaviour {
             EventManager.Fire<Event_PlayerMineCollect>(new Event_PlayerMineCollect() { playerIndex = player.Index });
             Collect();
         }
+    }
+
+    void OnBecameVisible() {
+        _appeared = true;
+    }
+
+    void OnBecameInvisible() {
+        Explode();
     }
 }

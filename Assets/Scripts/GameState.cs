@@ -8,12 +8,19 @@ public class GameState : MonoBehaviour {
     public static GameState Instance = null;
 
     public GameObject PlayerPrefab = null;
+    public GameObject PauseMenu = null;
+    public TrackNode FirstTrackNode = null;
 
     public List<Transform> StartPoints = new List<Transform>();
 
     public List<Player> Players = new List<Player>();
 
     float _startTime = 0f;
+
+    List<TrackNode> _trackNodes = new List<TrackNode>();
+
+    [HideInInspector]
+    public TrackNode CurrentNode = null;
 
     public float TimeFromStart {
         get {
@@ -33,6 +40,18 @@ public class GameState : MonoBehaviour {
 
     int _maximumMines = 10;
 
+    bool _pauseFlag = false;
+
+    public bool PauseEnabled {
+        get {
+            return _pauseFlag;
+        }
+        set {
+            _pauseFlag = value;
+            Time.timeScale = _pauseFlag ? 0 : 1;
+        }
+    }
+
     void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -43,8 +62,11 @@ public class GameState : MonoBehaviour {
     }
 
     void Start() {
+        GetTrackNodes();
+        CurrentNode = FirstTrackNode;
         var holder = FindObjectOfType<PlayerInfoHolder>();
         SpawnPlayers(holder.playersInfos);
+        EventManager.Subscribe<Event_Paused>(this, OnPauseToggle);
     }
 
     void SpawnPlayers(List<PlayerInfo> players) {
@@ -65,8 +87,20 @@ public class GameState : MonoBehaviour {
         return player;
     }
 
-   
+    void GetTrackNodes() {
+        _trackNodes.Clear();
+        var _curTrackNode = FirstTrackNode;
+        while (_curTrackNode.next != FirstTrackNode) {
+            _trackNodes.Add(_curTrackNode);
+            _curTrackNode = _curTrackNode.next;
+        }
+    }
 
-    
+    void OnPauseToggle(Event_Paused e) {
+        PauseEnabled = !PauseEnabled;
+    }
 
+    void OnDestroy() {
+        EventManager.Unsubscribe<Event_Paused>(OnPauseToggle);
+    }
 }
