@@ -10,6 +10,10 @@ public class PlayerInfoHolder : MonoBehaviour {
 		playersInfos.Add(player);
 	}
 
+	public void RemovePlayerInfo(PlayerInfo player) {
+		playersInfos.Remove(player);
+	}
+
 	void Start() {
 		DontDestroyOnLoad (this);
 	}

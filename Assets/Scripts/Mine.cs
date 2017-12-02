@@ -57,6 +57,9 @@ public class Mine : MonoBehaviour {
     }
 
     void OnBecameInvisible() {
-        Explode();
+		if (_appeared) {
+			Explode();
+		}
+       
     }
 }

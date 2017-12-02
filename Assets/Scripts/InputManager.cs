@@ -1,6 +1,4 @@
 ﻿using EventSys;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour {
@@ -11,7 +9,7 @@ public class InputManager : MonoBehaviour {
 	private string _launchAxisX;
 	private string _launchAxisY;
 	private string _moveTrigger;
-	private string _backMoveTrigger; //TODO
+	private string _backMoveTrigger;
 	private string _launchTrigger;
 	private string _pauseTrigger;
 
@@ -25,6 +23,7 @@ public class InputManager : MonoBehaviour {
 		_launchAxisX = prefix + "_launch_x";
 		_launchAxisY = prefix + "_launch_y";
 		_moveTrigger = prefix + "_move";
+		_backMoveTrigger = prefix + "_move_bk";
 		_launchTrigger = prefix + "_launch";
 		_pauseTrigger = prefix + "_pause";
 	}
@@ -46,20 +45,22 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public float GetMoveAcceleration (){
-		if (Input.GetKeyDown (_moveTrigger)) {
+		if (Input.GetButton (_moveTrigger)) {
 			return 1f;
+		} else if (Input.GetButton(_backMoveTrigger)) {
+			return -1f;
 		}
 
 		return 0f;
 	}
 
 	public bool GetLaunchTrigger() {
-		return Input.GetKeyDown (_launchTrigger);
+		return Input.GetButtonDown (_launchTrigger);
 	}
 
 	void Update() {
 		if (Input.GetKeyDown (_pauseTrigger)) {
-			EventSys.EventManager.Fire (new EventSys.Event_Paused());
+			EventManager.Fire (new Event_Paused());
 		}
 	}
 
