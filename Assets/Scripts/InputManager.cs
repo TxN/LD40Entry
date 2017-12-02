@@ -12,6 +12,7 @@ public class InputManager : MonoBehaviour {
 	private string _moveTrigger;
 	private string _backMoveTrigger; //TODO
 	private string _launchTrigger;
+	private string _pauseTrigger;
 
 	private float _directionAngle = 0f;
 	private float _launchAngle = 0f;
@@ -24,6 +25,7 @@ public class InputManager : MonoBehaviour {
 		_launchAxisY = prefix + "_launch_y";
 		_moveTrigger = prefix + "_move";
 		_launchTrigger = prefix + "_launch";
+		_pauseTrigger = prefix + "_pause";
 	}
 
 	public float GetDirection (){
@@ -61,7 +63,9 @@ public class InputManager : MonoBehaviour {
 	}
 
 	void Update() {
-		
+		if (Input.GetKeyDown (_pauseTrigger)) {
+			EventSys.EventManager.Fire (EventSys.Event_Paused);
+		}
 	}
 
 	protected bool IsZeroAngle(Vector2 vec) {

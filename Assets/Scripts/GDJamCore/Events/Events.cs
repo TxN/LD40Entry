@@ -10,4 +10,7 @@
     public struct Event_MaximumMinesCount_Change {
         public int count;
     }
+
+	public struct Event_Paused {
+	}
 }
