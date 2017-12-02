@@ -34,8 +34,8 @@ public class InputManager : MonoBehaviour {
 		if (IsZeroAngle (vec)) {
 			return _directionAngle;
 		}
-
-		_directionAngle = Mathf.Atan2 (vec.y, vec.x);
+		
+		_directionAngle = Mathf.Atan2 (vec.x, vec.y) * Mathf.Rad2Deg;
 		return _directionAngle;
 	}
 
@@ -59,7 +59,7 @@ public class InputManager : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown (_pauseTrigger)) {
+		if (Input.GetButtonDown (_pauseTrigger)) {
 			EventManager.Fire (new Event_Paused());
 		}
 	}

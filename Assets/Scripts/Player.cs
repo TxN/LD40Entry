@@ -133,12 +133,13 @@ public class Player : MonoBehaviour {
     void Update() {
         ProcessControls();
         var tgAngle = Quaternion.Euler(0, 0, _rotationAngle);
-        transform.rotation = Quaternion.Lerp(transform.rotation, tgAngle, ROT_SMOOTH_COEF);
+		_rb.MoveRotation(_rotationAngle);
+       // transform.rotation = Quaternion.Lerp(transform.rotation, tgAngle, ROT_SMOOTH_COEF);
     }
 
     void FixedUpdate() {
         if (Mathf.Abs(_moveForce) > 0.1f) {
-            _rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION, ForceMode2D.Force);
+            _rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION*_moveForce, ForceMode2D.Force);
         }
     }
 

@@ -71,10 +71,10 @@ public class GameState : MonoBehaviour {
 
     void SpawnPlayers(List<PlayerInfo> players) {
         for (int i = 0; i < players.Count; i++) {
-            var controls = new InputManager();
-            controls.Init(players[i].prefix);
             GameObject playerGo = Instantiate(PlayerPrefab, StartPoints[i].position, Quaternion.identity, null);
-            var player = playerGo.GetComponent<Player>();
+			var controls = playerGo.AddComponent<InputManager>();
+			controls.Init(players[i].prefix);
+			var player = playerGo.GetComponent<Player>();
             player.Init(i, controls, players[i].color);
         }
     }
