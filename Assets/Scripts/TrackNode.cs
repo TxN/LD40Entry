@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class TrackNode : MonoBehaviour {
 	public GameObject pole;
 	public TrackNode previous;
@@ -21,13 +22,15 @@ public class TrackNode : MonoBehaviour {
 		}
 
 		previous = prev;
-		transform.position = new Vector2 (previous.transform.position.x + 1, previous.transform.position.y);
+		transform.position = new Vector2 (previous.transform.position.x, previous.transform.position.y + 1);
 	
 		pos = new Vector2 (pole1Shift, 0);
 		pole1 = Instantiate (pole, pos, Quaternion.identity, transform);
 		pos = new Vector2 (pole2Shift, 0);
 		pole2 = Instantiate (pole, pos, Quaternion.identity, transform);
 		previous.next = this;
+
+		MovePoles ();
 	}
 
 	void Update(){
@@ -35,8 +38,8 @@ public class TrackNode : MonoBehaviour {
 		if (pole1 == null) {
 			return;
 		}
-		pole1.transform.localPosition.Set (pole1Shift, 0, 0);
-		pole2.transform.localPosition.Set (pole2Shift, 0, 0);
+
+		MovePoles ();
 	}
 
 	public void BuildObject()
@@ -48,5 +51,11 @@ public class TrackNode : MonoBehaviour {
 
 		trackNode.Init (this);
 		UnityEditor.Selection.activeGameObject = obj;
+	}
+
+	protected void MovePoles()
+	{
+		pole1.transform.localPosition = new Vector2 (pole1Shift, 0);
+		pole2.transform.localPosition = new Vector2 (pole2Shift, 0);
 	}
 }
