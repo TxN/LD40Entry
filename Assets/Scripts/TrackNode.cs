@@ -25,9 +25,7 @@ public class TrackNode : MonoBehaviour {
 	}
 
 	void Update(){
-		//pos = new Vector2 (pole1Shift, 0);
 		pole1.transform.localPosition.Set (pole1Shift, 0, 0);
-		//pos = new Vector2 (pole2Shift, 0);
 		pole2.transform.localPosition.Set (pole2Shift, 0, 0);
 	}
 
