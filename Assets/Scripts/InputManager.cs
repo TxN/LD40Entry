@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour {
+	const float ANGLE_PRECISION = 0.1f;
+
 	private string _directionAxisX;
 	private string _directionAxisY;
 	private string _launchAxisX;
@@ -10,6 +12,9 @@ public class InputManager : MonoBehaviour {
 	private string _moveTrigger;
 	private string _backMoveTrigger; //TODO
 	private string _launchTrigger;
+
+	private float _directionAngle = 0f;
+	private float _launchAngle = 0f;
 
 	public void Init(string prefix)
 	{
@@ -23,12 +28,24 @@ public class InputManager : MonoBehaviour {
 
 	public float GetDirection (){
 		Vector2 vec = new Vector2(Input.GetAxis(_directionAxisX), Input.GetAxis(_directionAxisY));
-		return Mathf.Atan2 (vec.y, vec.x);
+
+		if (IsZeroAngle (vec)) {
+			return _directionAngle;
+		}
+
+		_directionAngle = Mathf.Atan2 (vec.y, vec.x);
+		return _directionAngle;
 	}
 
 	public  float GetLaunchDirection(){
 		Vector2 vec = new Vector2(Input.GetAxis(_launchAxisX), Input.GetAxis(_launchAxisY));
-		return Mathf.Atan2 (vec.y, vec.x);
+
+		if (IsZeroAngle(vec)) {
+			return _launchAngle;
+		}
+
+		_launchAngle = Mathf.Atan2 (vec.y, vec.x);
+		return _launchAngle;
 	}
 
 	public float GetMoveAcceleration (){
@@ -41,5 +58,13 @@ public class InputManager : MonoBehaviour {
 
 	public bool GetLaunchTrigger() {
 		return Input.GetKeyDown (_launchTrigger);
+	}
+
+	void Update() {
+		
+	}
+
+	protected bool IsZeroAngle(Vector2 vec) {
+		return vec.magnitude - ANGLE_PRECISION <= 0;
 	}
 }
