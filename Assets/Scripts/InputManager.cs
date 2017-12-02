@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using EventSys;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -64,7 +65,7 @@ public class InputManager : MonoBehaviour {
 
 	void Update() {
 		if (Input.GetKeyDown (_pauseTrigger)) {
-			EventSys.EventManager.Fire (EventSys.Event_Paused);
+			EventSys.EventManager.Fire (new EventSys.Event_Paused());
 		}
 	}
 
