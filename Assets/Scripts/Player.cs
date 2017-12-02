@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EventSys;
 
 public class Player : MonoBehaviour {
 
@@ -25,6 +26,8 @@ public class Player : MonoBehaviour {
         _playerIndex = index;
         _shipColor = color;
         UpdateModelColor();
+
+        EventManager.Subscribe<Event_PlayerMineCollect>(this, OnMineCollect);
     }
 
     public void Kill() {
@@ -38,11 +41,15 @@ public class Player : MonoBehaviour {
         
     }
 
-    void OnMineCollect() {
+    void OnMineCollect(Event_PlayerMineCollect e) {
+        if (e.playerIndex == _playerIndex) {
 
+        } 
+        _collectedMines++;
+        
     }
 
     void OnDestroy() {
-
+        EventManager.Unsubscribe<Event_PlayerMineCollect>(OnMineCollect);
     }
 }
