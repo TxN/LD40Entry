@@ -65,6 +65,8 @@ public class Player : MonoBehaviour {
         }
         EventManager.Fire<Event_PlayerDead>(new Event_PlayerDead() { Player = this, PlayerIndex = _playerIndex });
         var deadObject = Instantiate(DeathPrefab, transform.position, Quaternion.identity);
+		deadObject.SetActive(true);
+		Destroy(gameObject);
         //Spawn death prefab and etc
     }
 
