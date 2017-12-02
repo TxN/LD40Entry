@@ -7,6 +7,7 @@ public class Player : MonoBehaviour {
     const float ROT_SMOOTH_COEF = 0.8f;
     const float MAX_ACCELERATION = 10f;
     const float MINE_DECC_PERCENT = 0.1f;
+	const float MINE_LAUNCH_COOLDOWN = 3f;
 
 	public GameObject BodyModel = null;
 	public GameObject InternalsModel = null;
@@ -20,6 +21,8 @@ public class Player : MonoBehaviour {
     int   _playerIndex = 0;
 
     int _collectedMines = 0;
+
+	float _lastMineLaunchTime = 0f;
 
     //=========
     //Movement
@@ -55,11 +58,11 @@ public class Player : MonoBehaviour {
         _input = controls;
         _playerIndex = index;
         _shipColor = color;
-    
- 
+     
         ColorSetter.UpdateModelColor(BodyModel, _shipColor);
 
         EventManager.Subscribe<Event_PlayerMineCollect>(this, OnMineCollect);
+		EventManager.Subscribe<Event_MaximumMinesCount_Change>(this, OnMineMaxCountChange);
     }
 
     public void Kill() {
@@ -78,10 +81,16 @@ public class Player : MonoBehaviour {
     void OnMineCollect(Event_PlayerMineCollect e) {
         if (e.playerIndex == _playerIndex) {
             _collectedMines++;
-        } 
+        }
+		UpdateInternals();
     }
 
-    void ProcessControls() {
+	void OnMineMaxCountChange(Event_MaximumMinesCount_Change e) {
+		UpdateInternals();
+	}
+
+
+	void ProcessControls() {
         if (!_isAlive) {
             return;
         }
@@ -93,11 +102,28 @@ public class Player : MonoBehaviour {
         }
     }
 
+	void UpdateInternals() {
+		int maxMines = GameState.Instance.MaxMinesBeforeExplosion;
+		float scale = 0.1f + 0.9f *( (float)_collectedMines/ (float) maxMines );
+		InternalsModel.transform.localScale = new Vector3(scale, scale, scale);
+
+		if ( _collectedMines > maxMines ) {
+			Kill();
+		} 
+	}
+
     void LaunchMine(Vector2 direction) {
+		if ( Time.time - _lastMineLaunchTime < MINE_LAUNCH_COOLDOWN ) {
+			return;
+		}
+		_lastMineLaunchTime = Time.time;
+
         GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.5f,Quaternion.identity);
         Mine mine = mineObj.GetComponent<Mine>();
         mine.Spawn(direction);
-        
+
+		_collectedMines--;
+		UpdateInternals();
     }
 
     void CalcShipMass() {

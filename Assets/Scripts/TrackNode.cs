@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 [ExecuteInEditMode]
 public class TrackNode : MonoBehaviour {
@@ -22,12 +23,24 @@ public class TrackNode : MonoBehaviour {
 		}
 
 		previous = prev;
-		transform.position = new Vector2 (previous.transform.position.x, previous.transform.position.y + 1);
-	
-		pos = new Vector2 (pole1Shift, 0);
-		pole1 = Instantiate (pole, pos, Quaternion.identity, transform);
-		pos = new Vector2 (pole2Shift, 0);
-		pole2 = Instantiate (pole, pos, Quaternion.identity, transform);
+		transform.position = prev.transform.position + prev.transform.TransformDirection(0,1,0)*2;
+		transform.rotation = prev.transform.rotation;
+
+		pole1Shift = prev.pole1Shift;
+		pole2Shift = prev.pole2Shift;
+
+		pos = new Vector3 (prev.pole1Shift, 0, prev.transform.position.z);
+		pole1 = PrefabUtility.InstantiatePrefab(pole) as GameObject;
+		pole1.transform.SetParent(transform);
+		pole1.transform.localPosition = pos;
+		pole1.transform.rotation = prev.transform.rotation;
+
+		pos = new Vector3 (prev.pole2Shift, 0, prev.transform.position.z);
+		pole2 = PrefabUtility.InstantiatePrefab(pole) as GameObject;
+		pole2.transform.SetParent(transform);
+		pole2.transform.localPosition = pos;
+		pole2.transform.rotation = prev.transform.rotation;
+
 		previous.next = this;
 
 		MovePoles ();
@@ -44,10 +57,14 @@ public class TrackNode : MonoBehaviour {
 
 	public void BuildObject()
 	{
+		int index = 0;
+		int.TryParse(gameObject.name.Replace("TrackNode", ""), out index);
+
 		GameObject obj = new GameObject();
 		obj.AddComponent<TrackNode> ();
-		obj.name = "Track Node";
-		TrackNode trackNode = obj.GetComponent<TrackNode> () as TrackNode;
+		obj.name = "TrackNode" + (index + 1);
+		obj.transform.SetParent(transform.parent, true);
+		TrackNode trackNode = obj.GetComponent<TrackNode>();
 
 		trackNode.Init (this);
 		UnityEditor.Selection.activeGameObject = obj;
@@ -55,7 +72,7 @@ public class TrackNode : MonoBehaviour {
 
 	protected void MovePoles()
 	{
-		pole1.transform.localPosition = new Vector2 (pole1Shift, 0);
-		pole2.transform.localPosition = new Vector2 (pole2Shift, 0);
+		pole1.transform.localPosition = new Vector3 (pole1Shift, 0, 0);
+		pole2.transform.localPosition = new Vector3 (pole2Shift, 0, 0);
 	}
 }
