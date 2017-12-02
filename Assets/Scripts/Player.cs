@@ -109,4 +109,8 @@ public class Player : MonoBehaviour {
     void OnDestroy() {
         EventManager.Unsubscribe<Event_PlayerMineCollect>(OnMineCollect);
     }
+
+    void OnBecameInvisible() {
+        Kill();
+    }
 }
