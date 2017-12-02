@@ -19,6 +19,19 @@ public class Player : MonoBehaviour {
             return _isAlive;
         }
     }
+
+    public bool CanAcceptMine {
+        get {
+            return _isAlive;
+        }
+    }
+
+    public int Index {
+        get {
+            return _playerIndex;
+        }
+    }
+
     bool _isAlive = true;
 
     public void Init(int index, InputManager controls, Color color) {
@@ -47,6 +60,14 @@ public class Player : MonoBehaviour {
         } 
         _collectedMines++;
         
+    }
+
+    void Update() {
+
+    }
+
+    void FixedUpdate() {
+
     }
 
     void OnDestroy() {
