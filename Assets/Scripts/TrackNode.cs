@@ -45,6 +45,8 @@ public class TrackNode : MonoBehaviour {
 		obj.AddComponent<TrackNode> ();
 		obj.name = "Track Node";
 		TrackNode trackNode = obj.GetComponent<TrackNode> () as TrackNode;
+
 		trackNode.Init (this);
+		UnityEditor.Selection.activeGameObject = obj;
 	}
 }
