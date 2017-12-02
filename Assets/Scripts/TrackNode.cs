@@ -7,7 +7,6 @@ public class TrackNode : MonoBehaviour {
 	public TrackNode previous;
 	public TrackNode next;
 
-	public Vector2 position;
 	public float pole1Shift = -0.5f;
 	public float pole2Shift = 0.5f;
 	public GameObject pole1;
@@ -22,7 +21,8 @@ public class TrackNode : MonoBehaviour {
 		}
 
 		previous = prev;
-		position = new Vector2(previous.position.x + 1, previous.position.y + 1);
+		transform.position = new Vector2 (previous.transform.position.x + 1, previous.transform.position.y);
+	
 		pos = new Vector2 (pole1Shift, 0);
 		pole1 = Instantiate (pole, pos, Quaternion.identity, transform);
 		pos = new Vector2 (pole2Shift, 0);
