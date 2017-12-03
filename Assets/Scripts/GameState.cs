@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using EventSys;
+using System.Linq;
 
 public class GameState : MonoBehaviour {
 
@@ -95,6 +96,10 @@ public class GameState : MonoBehaviour {
             _curTrackNode = _curTrackNode.next;
         }
     }
+
+	Player GetFirstPlayer() {
+		return Players.OrderByDescending (item => item.waypointSum).ToList().First();
+	}
 
     void OnPauseToggle(Event_Paused e) {
         PauseEnabled = !PauseEnabled;
