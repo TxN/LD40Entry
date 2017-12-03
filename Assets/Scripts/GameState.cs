@@ -132,9 +132,22 @@ public class GameState : MonoBehaviour {
         if (Players.Count == 0) {
             return null;
         }
-		List<Player> firstPlayers = Players.OrderByDescending (item => item.waypointSum).ToList();
-		if (FirstPlayer == null && !firstPlayers.Contains(FirstPlayer)) {
-			FirstPlayer = firstPlayers.First ();
+		List<Player> orderedPlayers = Players.OrderByDescending (item => item.waypointSum).ToList();
+		if (FirstPlayer == null) {
+			FirstPlayer = orderedPlayers.First ();
+		} else {
+			Player firstPlayer = orderedPlayers [0];
+			for (int i = 1; i < orderedPlayers.Count; i += 1) {
+				if (orderedPlayers [i].waypointSum < FirstPlayer.waypointSum) {
+					// Change FirstPlayer to new leader
+					FirstPlayer = firstPlayer;
+					break;
+				}
+				if (orderedPlayers [i].waypointSum == FirstPlayer.waypointSum) {
+					// Do not change FirstPlayer
+					break;
+				}
+			}
 		}
 
 		return FirstPlayer;
