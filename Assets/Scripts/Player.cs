@@ -8,12 +8,16 @@ public class Player : MonoBehaviour {
     const float MAX_ACCELERATION = 10f;
     const float MINE_DECC_PERCENT = 0.1f;
 	const float MINE_LAUNCH_COOLDOWN = 3f;
+	const int WAYPOINT_VALUE = 1;
 
 	public GameObject BodyModel = null;
 	public GameObject InternalsModel = null;
 
     public GameObject DeathPrefab = null;
     public GameObject MinePrefab = null;
+
+	public int waypointSum = 0;
+	public int lastPassedWaypoint = 0;
 
     InputManager _input = null;
 
@@ -149,4 +153,16 @@ public class Player : MonoBehaviour {
     void OnBecameInvisible() {
         Kill();
     }
+
+	void OnTriggerEnter(Collider collider) {
+		TrackNode trackNode = collider.GetComponent<TrackNode>();
+		if (trackNode) {
+			int trackNodeIndex = trackNode.GetIndex ();
+			// If Player moved to the next waypoint of passed lap-start position
+			if (lastPassedWaypoint < trackNodeIndex || (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1)) {
+				waypointSum += WAYPOINT_VALUE;
+				lastPassedWaypoint = trackNodeIndex;
+			}
+		}
+	}
 }

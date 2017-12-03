@@ -57,9 +57,7 @@ public class TrackNode : MonoBehaviour {
 
 	public void BuildObject()
 	{
-		int index = 0;
-		int.TryParse(gameObject.name.Replace("TrackNode", ""), out index);
-
+		int index = GetIndex ();
 		GameObject obj = new GameObject();
 		obj.AddComponent<TrackNode> ();
 		obj.name = "TrackNode" + (index + 1);
@@ -68,6 +66,13 @@ public class TrackNode : MonoBehaviour {
 
 		trackNode.Init (this);
 		UnityEditor.Selection.activeGameObject = obj;
+	}
+
+	public int GetIndex()
+	{
+		int index = 0;
+		int.TryParse(gameObject.name.Replace("TrackNode", ""), out index);
+		return index;
 	}
 
 	protected void MovePoles()
