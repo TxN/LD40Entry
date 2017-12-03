@@ -77,7 +77,6 @@ public class Player : MonoBehaviour {
     }
 
 
-
     void OnMineCollect(Event_PlayerMineCollect e) {
         if (e.playerIndex == _playerIndex) {
             _collectedMines++;

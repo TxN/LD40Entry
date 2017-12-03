@@ -45,13 +45,16 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public float GetMoveAcceleration (){
-		if (Input.GetButton (_moveTrigger)) {
+
+        return Input.GetAxis(_moveTrigger);
+
+        /*if (Input.GetButton (_moveTrigger)) {
 			return 1f;
 		} else if (Input.GetButton(_backMoveTrigger)) {
 			return -1f;
 		}
 
-		return 0f;
+		return 0f;*/
 	}
 
 	public bool GetLaunchTrigger() {
