@@ -5,7 +5,7 @@ using EventSys;
 
 public class Mine : MonoBehaviour {
 
-    const float LAUNCH_FORCE = 10f;
+    const float LAUNCH_FORCE = 5f;
 
     public GameObject ExplosionFab = null;
 
@@ -16,8 +16,8 @@ public class Mine : MonoBehaviour {
 
     public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
         _rb = gameObject.GetComponent<Rigidbody2D>();
-        _rb.velocity = initSpeed;
-        _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
+        _rb.velocity = initSpeed + speedVector * LAUNCH_FORCE;
+       // _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
         _col = GetComponent<Collider2D>();
         _col.enabled = false;
         Invoke("EnableCollision", 0.05f);

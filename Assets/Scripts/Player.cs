@@ -5,8 +5,8 @@ using EventSys;
 
 public class Player : MonoBehaviour {
     const float ROT_SMOOTH_COEF = 0.8f;
-    const float MAX_ACCELERATION = 3f;
-    const float MINE_DECC_PERCENT = 0.1f;
+    const float MAX_ACCELERATION = 4f;
+    const float MINE_DECC_PERCENT = 0.2f;
 	const float MINE_LAUNCH_COOLDOWN = 0.5f;
 	const float MINE_LAUNCH_MIN_DISTANCE = 1f;
 	const int WAYPOINT_VALUE = 1;
@@ -37,6 +37,7 @@ public class Player : MonoBehaviour {
     float _moveForce = 0;
     float _initMass = 1;
     Rigidbody2D _rb = null;
+    float _initDrag = 0;
 
     public bool Alive {
         get {
@@ -61,6 +62,7 @@ public class Player : MonoBehaviour {
     public void Init(int index, InputManager controls, Color color) {
         _rb = GetComponent<Rigidbody2D>();
         _initMass = _rb.mass;
+        _initDrag = _rb.drag;
         _input = controls;
         _playerIndex = index;
         _shipColor = color;
@@ -109,9 +111,9 @@ public class Player : MonoBehaviour {
 
 	void UpdateInternals() {
 		int maxMines = GameState.Instance.MaxMinesBeforeExplosion;
-		float scale = 0.1f + 0.9f *( (float)_collectedMines/ (float) maxMines );
+		float scale = 0.1f + 0.9f *( (float)_collectedMines / (float) maxMines );
 		InternalsModel.transform.localScale = new Vector3(scale, scale, scale);
-
+        CalcShipMass();
 		if ( _collectedMines > maxMines ) {
 			Kill();
 		} 
@@ -144,7 +146,8 @@ public class Player : MonoBehaviour {
     }
 
     void CalcShipMass() {
-        _rb.mass = _initMass + _initMass * (GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
+        _rb.mass = _initMass + _initMass * ((float)_collectedMines/GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
+        _rb.drag = _initDrag + _initDrag * ((float)_collectedMines / GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
     }
 
     void Update() {
@@ -166,7 +169,11 @@ public class Player : MonoBehaviour {
     }
 
     void OnBecameInvisible() {
+        if (this == null) {
+            return;
+        }
         Kill();
+        Debug.Log("Death " + _playerIndex);
     }
 
 	void OnTriggerEnter2D(Collider2D collider) {

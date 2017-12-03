@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [ExecuteInEditMode]
 public class TrackNode : MonoBehaviour {
@@ -31,7 +33,7 @@ public class TrackNode : MonoBehaviour {
 
 		pole1Shift = prev.pole1Shift;
 		pole2Shift = prev.pole2Shift;
-
+        #if UNITY_EDITOR
 		pos = new Vector3 (prev.pole1Shift, 0, prev.transform.position.z);
 		pole1 = PrefabUtility.InstantiatePrefab(pole) as GameObject;
 		pole1.transform.SetParent(transform);
@@ -43,7 +45,7 @@ public class TrackNode : MonoBehaviour {
 		pole2.transform.SetParent(transform);
 		pole2.transform.localPosition = pos;
 		pole2.transform.rotation = prev.transform.rotation;
-
+        #endif
 		previous.next = this;
 
         var bcol = gameObject.AddComponent<BoxCollider2D>();
@@ -75,7 +77,9 @@ public class TrackNode : MonoBehaviour {
 		TrackNode trackNode = obj.GetComponent<TrackNode>();
 
 		trackNode.Init (this);
+#if UNITY_EDITOR
 		UnityEditor.Selection.activeGameObject = obj;
+#endif
 	}
 
 	public int GetIndex()
