@@ -87,14 +87,18 @@ public class GameState : MonoBehaviour {
 		int trackNodesTotal = FindObjectsOfType<TrackNode> ().Length;
 		int minesTotal = Players.Count * MaxMinesBeforeExplosion + Players.Count;
 		//TODO: what will be if minesTotal > trackNodesTotal
-		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal;
+
+		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal * Players.Count;
 		int minTrackNodesBetweenMines = maxTrackNodesBetweenMines / 2;
 
 		int lastTrackNodeIndexWithMine = 1; // fist spawned mine
-		int minePositionOffset = 1;
+		int minePositionOffset = 0;
 
 		for (int i = 0; i < minesTotal; i += 1) {
-			minePositionOffset = Random.Range (minTrackNodesBetweenMines, maxTrackNodesBetweenMines);
+			do {
+				minePositionOffset = Random.Range (minTrackNodesBetweenMines, maxTrackNodesBetweenMines + 1);
+			} while (minePositionOffset == 0);
+
 			int position = lastTrackNodeIndexWithMine + minePositionOffset;
 			TrackNode trackNode = _trackNodes [position - 1];
 			lastTrackNodeIndexWithMine = position;
