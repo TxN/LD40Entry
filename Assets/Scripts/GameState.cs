@@ -102,7 +102,7 @@ public class GameState : MonoBehaviour {
 			} while (minePositionOffset == 0);
 
 			int position = lastTrackNodeIndexWithMine + minePositionOffset;
-			TrackNode trackNode = _trackNodes [Mathf.Clamp(position - 1,0, _trackNodes.Count -1)];
+			TrackNode trackNode = _trackNodes [Mathf.Clamp(position - 1,0, _trackNodes.Count -1)]; //TODO: fix algorithm
 			lastTrackNodeIndexWithMine = position;
 
 			GameObject mineGo = Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
@@ -139,6 +139,29 @@ public class GameState : MonoBehaviour {
 			for (int i = 0; i < orderedPlayers.Count; i += 1) {
 				if (orderedPlayers [i].waypointSum > FirstPlayer.waypointSum) {
 					FirstPlayer = orderedPlayers[i];
+					break;
+				}
+
+				if (orderedPlayers [i].waypointSum == FirstPlayer.waypointSum && orderedPlayers [i].Index != FirstPlayer.Index) {
+					int nearedNotPassedNodeIndex = FirstPlayer.lastPassedWaypoint + 1;
+					if (nearedNotPassedNodeIndex > _trackNodes.Count - 1) {
+						nearedNotPassedNodeIndex = 1;
+					}
+
+					TrackNode nearestNotPassedNode = _trackNodes [nearedNotPassedNodeIndex];
+					Vector2 nodePos = new Vector2 (nearestNotPassedNode.transform.position.x, nearestNotPassedNode.transform.position.y);
+					Vector2 firstPlayerPos = new Vector2 (FirstPlayer.transform.position.x, FirstPlayer.transform.position.y);
+					Vector2 candidatePlayerPos = new Vector2 (orderedPlayers [i].transform.position.x, orderedPlayers [i].transform.position.y);
+					float magnitude1 = (nodePos - firstPlayerPos).magnitude;
+					float magnitude2 = (nodePos - candidatePlayerPos).magnitude;
+
+					if (magnitude1 > magnitude2) {
+						FirstPlayer = orderedPlayers [i];
+					}
+				}
+
+				if (orderedPlayers [i].waypointSum < FirstPlayer.waypointSum) {
+					// No need to continue
 					break;
 				}
 			}
