@@ -127,7 +127,10 @@ public class GameState : MonoBehaviour {
 	}
 
     void Update() {
-        CamControl.Instance.player = GetFirstPlayer().transform;
+        Player leader = GetFirstPlayer();
+        if (leader != null) {
+            CamControl.Instance.player = GetFirstPlayer().transform;
+        }
     }
 
     void OnPauseToggle(Event_Paused e) {
