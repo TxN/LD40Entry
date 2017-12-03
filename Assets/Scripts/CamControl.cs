@@ -45,7 +45,7 @@ public class CamControl : MonoBehaviour {
         }
         moveError = Vector3.Distance(_lastPos, player.position);
         float cLerp = lerpCoef.Evaluate(moveError);
-        Vector3 newPos = Vector3.Lerp(transform.position, player.position, cLerp * Time.deltaTime *5f);
+        Vector3 newPos = Vector3.Lerp(transform.position, player.position, cLerp * Time.deltaTime *8f);
         newPos.z = initZ;
         transform.position = newPos;
         _lastPos = player.position;

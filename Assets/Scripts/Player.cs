@@ -5,7 +5,7 @@ using EventSys;
 
 public class Player : MonoBehaviour {
     const float ROT_SMOOTH_COEF = 0.8f;
-    const float MAX_ACCELERATION = 4f;
+    const float MAX_ACCELERATION = 5f;
     const float MINE_DECC_PERCENT = 0.2f;
 	const float MINE_LAUNCH_COOLDOWN = 0.5f;
 	const float MINE_LAUNCH_MIN_DISTANCE = 1f;
@@ -143,6 +143,7 @@ public class Player : MonoBehaviour {
 
 		_collectedMines--;
 		UpdateInternals();
+        GetComponent<AudioSource>().Play();
     }
 
     void CalcShipMass() {
