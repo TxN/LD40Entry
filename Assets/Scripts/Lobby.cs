@@ -56,6 +56,6 @@ public class Lobby : MonoBehaviour {
 	}
 
 	void GoToGame() {
-		SceneManager.LoadScene("MainScene");
+		SceneManager.LoadScene("track1");
 	}
 }
