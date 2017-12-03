@@ -16,11 +16,31 @@ public class TrackSetup : MonoBehaviour {
 			ren.positionCount = 2;
 			ren.SetPositions(points);
 
+            var pole1tr = node.pole1.transform.GetChild(0);
+            var pole2tr = node.pole2.transform.GetChild(0);
+
+            EdgeCollider2D col = node.pole1.transform.GetChild(0).gameObject.GetComponent<EdgeCollider2D>();
+            if (!col) {
+                col = node.pole1.transform.GetChild(0).gameObject.AddComponent<EdgeCollider2D>();
+            }
+            col.points = new Vector2[] { pole1tr.localPosition, pole1tr.InverseTransformPoint(node.next.pole1.transform.GetChild(0).position) };
+            col = null;
+
+            
+
 			ren = node.pole2.GetComponentInChildren<LineRenderer>();
 			points[0] = node.pole2.transform.GetChild(0).position;
 			points[1] = node.next.pole2.transform.GetChild(0).position;
 			ren.positionCount = 2;
 			ren.SetPositions(points);
+
+            col = node.pole2.transform.GetChild(0).gameObject.GetComponent<EdgeCollider2D>();
+            if (!col) {
+                col = node.pole2.transform.GetChild(0).gameObject.AddComponent<EdgeCollider2D>();
+            }
+
+            col.points = new Vector2[] { pole2tr.localPosition, pole2tr.InverseTransformPoint(node.next.pole2.transform.GetChild(0).position) };
+            col = null;
 		}
 	}
 }

@@ -117,6 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 259304837}
   - component: {fileID: 259304836}
+  - component: {fileID: 259304838}
   m_Layer: 0
   m_Name: Lobby
   m_TagString: Untagged
@@ -138,8 +139,12 @@ MonoBehaviour:
   playersInfosGameObject: {fileID: 0}
   joinKeys:
   - kb1_join
+  - j1_join
+  - j2_join
   joinKeysPrefixes:
   - kb1
+  - j1
+  - j2
   JoinObjects:
   - {fileID: 701887884}
   - {fileID: 1793029061}
@@ -158,6 +163,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &259304838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 259304835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70f4f5a5de22e454599f51f60dfa7109, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &301571962
 Prefab:
   m_ObjectHideFlags: 0

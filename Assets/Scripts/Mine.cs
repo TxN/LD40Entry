@@ -5,31 +5,32 @@ using EventSys;
 
 public class Mine : MonoBehaviour {
 
-    const float LAUNCH_FORCE = 10f;
+    const float LAUNCH_FORCE = 5f;
 
     public GameObject ExplosionFab = null;
 
     Rigidbody2D _rb = null;
     Collider2D _col = null;
-    bool _mineEnabled = false;
+    bool _mineEnabled = true;
     bool _appeared = false;
 
-    public void Spawn(Vector2 speedVector) {
+    public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
         _rb = gameObject.GetComponent<Rigidbody2D>();
-        _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
+        _rb.velocity = initSpeed + speedVector * LAUNCH_FORCE;
+       // _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
         _col = GetComponent<Collider2D>();
         _col.enabled = false;
-        Invoke("EnableCollision", 0.1f);
-        Invoke("EnableMine", 0.2f);
+        Invoke("EnableCollision", 0.05f);
+        //Invoke("EnableMine", 0.05f);
     }
 
     void Explode() {
         Instantiate(ExplosionFab, transform.position, Quaternion.identity);
-        Destroy(this);
+		Destroy(this.gameObject);
     }
 
     void Collect() {
-        Destroy(this);
+		Destroy(this.gameObject);
     }
 
     void EnableMine() {
@@ -45,7 +46,13 @@ public class Mine : MonoBehaviour {
             return;
         }
 
+        _rb.velocity = Vector3.zero;
+        _rb.angularVelocity = 0;
+        
         var player = coll.gameObject.GetComponent<Player>();
+        if (!player) {
+            player = coll.otherCollider.gameObject.GetComponent<Player>();
+        }
         if (player && player.CanAcceptMine) {
             EventManager.Fire<Event_PlayerMineCollect>(new Event_PlayerMineCollect() { playerIndex = player.Index });
             Collect();

@@ -5,15 +5,21 @@ using EventSys;
 
 public class Player : MonoBehaviour {
     const float ROT_SMOOTH_COEF = 0.8f;
-    const float MAX_ACCELERATION = 10f;
-    const float MINE_DECC_PERCENT = 0.1f;
-	const float MINE_LAUNCH_COOLDOWN = 3f;
+    const float MAX_ACCELERATION = 4f;
+    const float MINE_DECC_PERCENT = 0.2f;
+	const float MINE_LAUNCH_COOLDOWN = 0.5f;
+	const float MINE_LAUNCH_MIN_DISTANCE = 1f;
+	const int WAYPOINT_VALUE = 1;
+
 
 	public GameObject BodyModel = null;
 	public GameObject InternalsModel = null;
 
     public GameObject DeathPrefab = null;
     public GameObject MinePrefab = null;
+
+	public int waypointSum = 0;
+	public int lastPassedWaypoint = 0;
 
     InputManager _input = null;
 
@@ -31,6 +37,7 @@ public class Player : MonoBehaviour {
     float _moveForce = 0;
     float _initMass = 1;
     Rigidbody2D _rb = null;
+    float _initDrag = 0;
 
     public bool Alive {
         get {
@@ -40,7 +47,7 @@ public class Player : MonoBehaviour {
 
     public bool CanAcceptMine {
         get {
-            return _isAlive;
+			return _isAlive;// && _collectedMines < GameState.Instance.MaxMinesBeforeExplosion;
         }
     }
 
@@ -55,6 +62,7 @@ public class Player : MonoBehaviour {
     public void Init(int index, InputManager controls, Color color) {
         _rb = GetComponent<Rigidbody2D>();
         _initMass = _rb.mass;
+        _initDrag = _rb.drag;
         _input = controls;
         _playerIndex = index;
         _shipColor = color;
@@ -77,7 +85,6 @@ public class Player : MonoBehaviour {
     }
 
 
-
     void OnMineCollect(Event_PlayerMineCollect e) {
         if (e.playerIndex == _playerIndex) {
             _collectedMines++;
@@ -98,15 +105,15 @@ public class Player : MonoBehaviour {
         _moveForce = _input.GetMoveAcceleration();
 
         if (_input.GetLaunchTrigger() && _collectedMines > 0 ) {
-            LaunchMine(_input.GetLaunchDirection());
+            LaunchMine(-_input.GetLaunchDirection());
         }
     }
 
 	void UpdateInternals() {
 		int maxMines = GameState.Instance.MaxMinesBeforeExplosion;
-		float scale = 0.1f + 0.9f *( (float)_collectedMines/ (float) maxMines );
+		float scale = 0.1f + 0.9f *( (float)_collectedMines / (float) maxMines );
 		InternalsModel.transform.localScale = new Vector3(scale, scale, scale);
-
+        CalcShipMass();
 		if ( _collectedMines > maxMines ) {
 			Kill();
 		} 
@@ -116,18 +123,31 @@ public class Player : MonoBehaviour {
 		if ( Time.time - _lastMineLaunchTime < MINE_LAUNCH_COOLDOWN ) {
 			return;
 		}
+
+		RaycastHit2D[] hits = Physics2D.RaycastAll (transform.position, (Vector2)direction, MINE_LAUNCH_MIN_DISTANCE);
+		for (int i = 0; i < hits.Length; i += 1) {
+			if (hits [i].collider.GetType () == typeof(EdgeCollider2D)) {
+				return;
+			}
+		}
+
+		if (direction.magnitude == 0) {
+			return;
+		}
+
 		_lastMineLaunchTime = Time.time;
 
-        GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.5f,Quaternion.identity);
+        GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.75f,Quaternion.identity);
         Mine mine = mineObj.GetComponent<Mine>();
-        mine.Spawn(direction);
+        mine.Spawn(direction,_rb.velocity);
 
 		_collectedMines--;
 		UpdateInternals();
     }
 
     void CalcShipMass() {
-        _rb.mass = _initMass + _initMass * (GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
+        _rb.mass = _initMass + _initMass * ((float)_collectedMines/GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
+        _rb.drag = _initDrag + _initDrag * ((float)_collectedMines / GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
     }
 
     void Update() {
@@ -145,9 +165,26 @@ public class Player : MonoBehaviour {
 
     void OnDestroy() {
         EventManager.Unsubscribe<Event_PlayerMineCollect>(OnMineCollect);
+        EventManager.Unsubscribe<Event_MaximumMinesCount_Change>(OnMineMaxCountChange);
     }
 
     void OnBecameInvisible() {
+        if (this == null) {
+            return;
+        }
         Kill();
+        Debug.Log("Death " + _playerIndex);
     }
+
+	void OnTriggerEnter2D(Collider2D collider) {
+		TrackNode trackNode = collider.GetComponent<TrackNode>();
+		if (trackNode) {
+			int trackNodeIndex = trackNode.GetIndex ();
+			// If Player moved to the next waypoint of passed lap-start position
+			if (lastPassedWaypoint < trackNodeIndex || (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1)) {
+				waypointSum += WAYPOINT_VALUE;
+				lastPassedWaypoint = trackNodeIndex;
+			}
+		}
+	}
 }

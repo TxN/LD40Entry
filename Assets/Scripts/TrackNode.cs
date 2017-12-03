@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [ExecuteInEditMode]
 public class TrackNode : MonoBehaviour {
@@ -14,6 +16,9 @@ public class TrackNode : MonoBehaviour {
 	public GameObject pole1;
 	public GameObject pole2;
 	private Vector2 pos;
+
+    private float _lastP1Shift = 0f;
+    private float _lastP2Shift = 0f;
 
 	public void Init(TrackNode prev)
 	{
@@ -28,7 +33,7 @@ public class TrackNode : MonoBehaviour {
 
 		pole1Shift = prev.pole1Shift;
 		pole2Shift = prev.pole2Shift;
-
+        #if UNITY_EDITOR
 		pos = new Vector3 (prev.pole1Shift, 0, prev.transform.position.z);
 		pole1 = PrefabUtility.InstantiatePrefab(pole) as GameObject;
 		pole1.transform.SetParent(transform);
@@ -40,8 +45,15 @@ public class TrackNode : MonoBehaviour {
 		pole2.transform.SetParent(transform);
 		pole2.transform.localPosition = pos;
 		pole2.transform.rotation = prev.transform.rotation;
-
+        #endif
 		previous.next = this;
+
+        var bcol = gameObject.AddComponent<BoxCollider2D>();
+        bcol.isTrigger = true;
+        float width = -pole1Shift + pole2Shift;
+
+        bcol.size = new Vector2(width, 0.35f);
+        bcol.offset = new Vector2((pole1Shift+pole2Shift)*0.5f, 0);
 
 		MovePoles ();
 	}
@@ -57,9 +69,7 @@ public class TrackNode : MonoBehaviour {
 
 	public void BuildObject()
 	{
-		int index = 0;
-		int.TryParse(gameObject.name.Replace("TrackNode", ""), out index);
-
+		int index = GetIndex ();
 		GameObject obj = new GameObject();
 		obj.AddComponent<TrackNode> ();
 		obj.name = "TrackNode" + (index + 1);
@@ -67,12 +77,37 @@ public class TrackNode : MonoBehaviour {
 		TrackNode trackNode = obj.GetComponent<TrackNode>();
 
 		trackNode.Init (this);
+#if UNITY_EDITOR
 		UnityEditor.Selection.activeGameObject = obj;
+#endif
+	}
+
+	public int GetIndex()
+	{
+		int index = 0;
+		int.TryParse(gameObject.name.Replace("TrackNode", ""), out index);
+		return index;
 	}
 
 	protected void MovePoles()
 	{
+        if (_lastP1Shift == pole1Shift && _lastP2Shift == pole2Shift) {
+            return;
+        }
+        _lastP1Shift = pole1Shift;
+        _lastP2Shift = pole2Shift;
+
 		pole1.transform.localPosition = new Vector3 (pole1Shift, 0, 0);
 		pole2.transform.localPosition = new Vector3 (pole2Shift, 0, 0);
+
+        var bcol = gameObject.GetComponent<BoxCollider2D>();
+        if (!bcol) {
+            bcol = gameObject.AddComponent<BoxCollider2D>();
+        }
+        bcol.isTrigger = true;
+        float width = -pole1Shift + pole2Shift;
+
+        bcol.size = new Vector2(width, 0.35f);
+        bcol.offset = new Vector2((pole1Shift + pole2Shift) * 0.5f, 0);
 	}
 }
