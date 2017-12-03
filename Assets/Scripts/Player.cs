@@ -8,6 +8,7 @@ public class Player : MonoBehaviour {
     const float MAX_ACCELERATION = 3f;
     const float MINE_DECC_PERCENT = 0.1f;
 	const float MINE_LAUNCH_COOLDOWN = 0.5f;
+	const float MINE_LAUNCH_MIN_DISTANCE = 1f;
 	const int WAYPOINT_VALUE = 1;
 
 
@@ -120,6 +121,18 @@ public class Player : MonoBehaviour {
 		if ( Time.time - _lastMineLaunchTime < MINE_LAUNCH_COOLDOWN ) {
 			return;
 		}
+
+		RaycastHit2D[] hits = Physics2D.RaycastAll (transform.position, (Vector2)direction, MINE_LAUNCH_MIN_DISTANCE);
+
+		if (hits.Length > 1 || (hits.Length == 1 && !hits [0].collider.GetComponent<Player> ())) {
+			return;
+		}
+
+		Debug.Log (direction.magnitude);
+		if (direction.magnitude == 0) {
+			return;
+		}
+
 		_lastMineLaunchTime = Time.time;
 
         GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.5f,Quaternion.identity);
