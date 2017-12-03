@@ -102,7 +102,7 @@ public class GameState : MonoBehaviour {
 			} while (minePositionOffset == 0);
 
 			int position = lastTrackNodeIndexWithMine + minePositionOffset;
-			TrackNode trackNode = _trackNodes [position - 1];
+			TrackNode trackNode = _trackNodes [Mathf.Clamp(position - 1,0, _trackNodes.Count -1)];
 			lastTrackNodeIndexWithMine = position;
 
 			GameObject mineGo = Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
