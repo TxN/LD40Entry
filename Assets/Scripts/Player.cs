@@ -163,7 +163,6 @@ public class Player : MonoBehaviour {
 			if (lastPassedWaypoint < trackNodeIndex || (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1)) {
 				waypointSum += WAYPOINT_VALUE;
 				lastPassedWaypoint = trackNodeIndex;
-				Debug.Log (lastPassedWaypoint);
 			}
 		}
 	}
