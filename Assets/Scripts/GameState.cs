@@ -9,6 +9,7 @@ public class GameState : MonoBehaviour {
     public static GameState Instance = null;
 
     public GameObject PlayerPrefab = null;
+	public GameObject MinePrefab = null;
     public GameObject PauseMenu = null;
     public TrackNode FirstTrackNode = null;
 
@@ -67,6 +68,7 @@ public class GameState : MonoBehaviour {
         CurrentNode = FirstTrackNode;
         var holder = FindObjectOfType<PlayerInfoHolder>();
         SpawnPlayers(holder.playersInfos);
+		SpawnMines ();
         EventManager.Subscribe<Event_Paused>(this, OnPauseToggle);
     }
 
@@ -80,6 +82,23 @@ public class GameState : MonoBehaviour {
 			Players.Add(player);
         }
     }
+
+	void SpawnMines() {
+		int trackNodesTotal = FindObjectsOfType<TrackNode> ().Length;
+		int minesTotal = Players.Count * Player.MAX_MINES_CAN_BE_TAKEN + Players.Count;
+		//TODO: what will be if minesTotal > trackNodesTotal
+		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal;
+		int minTrackNodesBetweenMines = maxTrackNodesBetweenMines / 2;
+
+		int lastTrackNodeIndexWithMine = 1; // fist spawned mine
+		int minePositionOffset = 1;
+		for (int i = 0; i < minesTotal; i += 1) {
+			minePositionOffset = Random.Range (minTrackNodesBetweenMines, maxTrackNodesBetweenMines);
+			int position = lastTrackNodeIndexWithMine + minePositionOffset;
+			TrackNode trackNode = _trackNodes [position - 1];
+			Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
+		}
+	}
 
     Player CreatePlayer(int index, InputManager controls, Color color) {
         var go = Instantiate(PlayerPrefab, null, StartPoints[index]);
