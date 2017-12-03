@@ -162,6 +162,7 @@ public class Player : MonoBehaviour {
 
     void OnDestroy() {
         EventManager.Unsubscribe<Event_PlayerMineCollect>(OnMineCollect);
+        EventManager.Unsubscribe<Event_MaximumMinesCount_Change>(OnMineMaxCountChange);
     }
 
     void OnBecameInvisible() {
