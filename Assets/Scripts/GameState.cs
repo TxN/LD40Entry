@@ -16,6 +16,7 @@ public class GameState : MonoBehaviour {
     public List<Transform> StartPoints = new List<Transform>();
 
     public List<Player> Players = new List<Player>();
+	public Player FirstPlayer = null;
 
     float _startTime = 0f;
 
@@ -127,7 +128,12 @@ public class GameState : MonoBehaviour {
     }
 
 	Player GetFirstPlayer() {
-		return Players.OrderByDescending (item => item.waypointSum).ToList().First();
+		List<Player> firstPlayers = Players.OrderByDescending (item => item.waypointSum).ToList();
+		if (FirstPlayer == null && !firstPlayers.Contains(FirstPlayer)) {
+			FirstPlayer = firstPlayers.First ();
+		}
+
+		return FirstPlayer;
 	}
 
     void Update() {
