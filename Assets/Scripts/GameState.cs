@@ -107,7 +107,7 @@ public class GameState : MonoBehaviour {
 
 			GameObject mineGo = Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
 			Mine mine = mineGo.GetComponent<Mine> ();
-			mine.Spawn (new Vector2 (0, 0));
+            mine.Spawn(new Vector2(0, 0), new Vector2(0, 0));
 		}
 	}
 

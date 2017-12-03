@@ -14,8 +14,9 @@ public class Mine : MonoBehaviour {
     bool _mineEnabled = true;
     bool _appeared = false;
 
-    public void Spawn(Vector2 speedVector) {
+    public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
         _rb = gameObject.GetComponent<Rigidbody2D>();
+        _rb.velocity = initSpeed;
         _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
         _col = GetComponent<Collider2D>();
         _col.enabled = false;
@@ -46,6 +47,7 @@ public class Mine : MonoBehaviour {
         }
 
         _rb.velocity = Vector3.zero;
+        _rb.angularVelocity = 0;
         
         var player = coll.gameObject.GetComponent<Player>();
         if (!player) {

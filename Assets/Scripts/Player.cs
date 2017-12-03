@@ -135,9 +135,9 @@ public class Player : MonoBehaviour {
 
 		_lastMineLaunchTime = Time.time;
 
-        GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.5f,Quaternion.identity);
+        GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.75f,Quaternion.identity);
         Mine mine = mineObj.GetComponent<Mine>();
-        mine.Spawn(direction);
+        mine.Spawn(direction,_rb.velocity);
 
 		_collectedMines--;
 		UpdateInternals();
