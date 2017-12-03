@@ -25,11 +25,11 @@ public class Mine : MonoBehaviour {
 
     void Explode() {
         Instantiate(ExplosionFab, transform.position, Quaternion.identity);
-        Destroy(this);
+		Destroy(this.gameObject);
     }
 
     void Collect() {
-        Destroy(this);
+		Destroy(this.gameObject);
     }
 
     void EnableMine() {

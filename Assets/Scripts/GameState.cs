@@ -92,11 +92,16 @@ public class GameState : MonoBehaviour {
 
 		int lastTrackNodeIndexWithMine = 1; // fist spawned mine
 		int minePositionOffset = 1;
+
 		for (int i = 0; i < minesTotal; i += 1) {
 			minePositionOffset = Random.Range (minTrackNodesBetweenMines, maxTrackNodesBetweenMines);
 			int position = lastTrackNodeIndexWithMine + minePositionOffset;
 			TrackNode trackNode = _trackNodes [position - 1];
-			Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
+			lastTrackNodeIndexWithMine = position;
+
+			GameObject mineGo = Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
+			Mine mine = mineGo.GetComponent<Mine> ();
+			mine.Spawn (new Vector2 (0, 0));
 		}
 	}
 

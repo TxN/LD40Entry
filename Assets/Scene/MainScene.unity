@@ -3591,6 +3591,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerPrefab: {fileID: 1858177136524362, guid: ad96dd880b603554184f7fe55a5b68aa,
     type: 2}
+  MinePrefab: {fileID: 1465748784053424, guid: 2a8b68becc8dad345a777ca05b901c93, type: 2}
   PauseMenu: {fileID: 0}
   FirstTrackNode: {fileID: 1523659325}
   StartPoints:
