@@ -19,7 +19,7 @@ public class Mine : MonoBehaviour {
         _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
         _col = GetComponent<Collider2D>();
         _col.enabled = false;
-        Invoke("EnableCollision", 0.02f);
+        Invoke("EnableCollision", 0.05f);
         //Invoke("EnableMine", 0.05f);
     }
 
