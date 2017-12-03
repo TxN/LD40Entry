@@ -44,6 +44,8 @@ public class Mine : MonoBehaviour {
         if (!_mineEnabled) {
             return;
         }
+
+        _rb.velocity = Vector3.zero;
         
         var player = coll.gameObject.GetComponent<Player>();
         if (!player) {
