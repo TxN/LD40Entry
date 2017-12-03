@@ -123,12 +123,12 @@ public class Player : MonoBehaviour {
 		}
 
 		RaycastHit2D[] hits = Physics2D.RaycastAll (transform.position, (Vector2)direction, MINE_LAUNCH_MIN_DISTANCE);
-
-		if (hits.Length > 1 || (hits.Length == 1 && !hits [0].collider.GetComponent<Player> ())) {
-			return;
+		for (int i = 0; i < hits.Length; i += 1) {
+			if (hits [i].collider.GetType () == typeof(EdgeCollider2D)) {
+				return;
+			}
 		}
 
-		Debug.Log (direction.magnitude);
 		if (direction.magnitude == 0) {
 			return;
 		}

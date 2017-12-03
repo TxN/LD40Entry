@@ -71,6 +71,7 @@ public class GameState : MonoBehaviour {
         SpawnPlayers(holder.playersInfos);
 		SpawnMines ();
         EventManager.Subscribe<Event_Paused>(this, OnPauseToggle);
+        EventManager.Subscribe<Event_PlayerDead>(this, OnPlayerDead);
     }
 
     void SpawnPlayers(List<PlayerInfo> players) {
@@ -128,6 +129,9 @@ public class GameState : MonoBehaviour {
     }
 
 	Player GetFirstPlayer() {
+        if (Players.Count == 0) {
+            return null;
+        }
 		List<Player> firstPlayers = Players.OrderByDescending (item => item.waypointSum).ToList();
 		if (FirstPlayer == null && !firstPlayers.Contains(FirstPlayer)) {
 			FirstPlayer = firstPlayers.First ();
@@ -149,9 +153,19 @@ public class GameState : MonoBehaviour {
 
     void OnDestroy() {
         EventManager.Unsubscribe<Event_Paused>(OnPauseToggle);
+        EventManager.Unsubscribe<Event_PlayerDead>(OnPlayerDead);
     }
 
     void OnPlayerDead(Event_PlayerDead e) {
         Players.Remove(e.Player);
+        CamControl.Instance.GetComponentInChildren<CameraShake>().ShakeCamera(1, 0.7f);
+
+        if (Players.Count <= 1) {
+            Invoke("EndGame",1.5f);
+        }
+    }
+
+    void EndGame() {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("JoinScreen");
     }
 }
