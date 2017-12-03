@@ -85,7 +85,7 @@ public class GameState : MonoBehaviour {
 
 	void SpawnMines() {
 		int trackNodesTotal = FindObjectsOfType<TrackNode> ().Length;
-		int minesTotal = Players.Count * Player.MAX_MINES_CAN_BE_TAKEN + Players.Count;
+		int minesTotal = Players.Count * MaxMinesBeforeExplosion + Players.Count;
 		//TODO: what will be if minesTotal > trackNodesTotal
 		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal;
 		int minTrackNodesBetweenMines = maxTrackNodesBetweenMines / 2;
@@ -136,5 +136,9 @@ public class GameState : MonoBehaviour {
 
     void OnDestroy() {
         EventManager.Unsubscribe<Event_Paused>(OnPauseToggle);
+    }
+
+    void OnPlayerDead(Event_PlayerDead e) {
+        Players.Remove(e.Player);
     }
 }

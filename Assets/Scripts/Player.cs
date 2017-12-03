@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
     const float MINE_DECC_PERCENT = 0.1f;
 	const float MINE_LAUNCH_COOLDOWN = 3f;
 	const int WAYPOINT_VALUE = 1;
-	public const int MAX_MINES_CAN_BE_TAKEN = 5;
+
 
 	public GameObject BodyModel = null;
 	public GameObject InternalsModel = null;
@@ -19,7 +19,6 @@ public class Player : MonoBehaviour {
 
 	public int waypointSum = 0;
 	public int lastPassedWaypoint = 0;
-	public int minesTaken = MAX_MINES_CAN_BE_TAKEN; // TODO: will be lowered later
 
     InputManager _input = null;
 
@@ -46,7 +45,7 @@ public class Player : MonoBehaviour {
 
     public bool CanAcceptMine {
         get {
-			return _isAlive && _collectedMines < minesTaken;
+			return _isAlive;// && _collectedMines < GameState.Instance.MaxMinesBeforeExplosion;
         }
     }
 
@@ -103,7 +102,7 @@ public class Player : MonoBehaviour {
         _moveForce = _input.GetMoveAcceleration();
 
         if (_input.GetLaunchTrigger() && _collectedMines > 0 ) {
-            LaunchMine(_input.GetLaunchDirection());
+            LaunchMine(-_input.GetLaunchDirection());
         }
     }
 
