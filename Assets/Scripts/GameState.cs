@@ -77,6 +77,7 @@ public class GameState : MonoBehaviour {
 			controls.Init(players[i].prefix);
 			var player = playerGo.GetComponent<Player>();
             player.Init(i, controls, players[i].color);
+			Players.Add(player);
         }
     }
 
