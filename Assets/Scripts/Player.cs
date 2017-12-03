@@ -73,6 +73,7 @@ public class Player : MonoBehaviour {
 		EventManager.Subscribe<Event_MaximumMinesCount_Change>(this, OnMineMaxCountChange);
     }
 
+	[ContextMenu("DIE!")]
     public void Kill() {
         if (!_isAlive) {
             return;
@@ -80,6 +81,9 @@ public class Player : MonoBehaviour {
         EventManager.Fire<Event_PlayerDead>(new Event_PlayerDead() { Player = this, PlayerIndex = _playerIndex });
         var deadObject = Instantiate(DeathPrefab, transform.position, Quaternion.identity);
 		deadObject.SetActive(true);
+		var parts = deadObject.GetComponent<ParticleSystem>().main;
+		parts.startColor = _shipColor;
+		//deadObject.GetComponent<ParticleSystem>().main = parts;
 		Destroy(gameObject);
         //Spawn death prefab and etc
     }

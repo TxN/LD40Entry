@@ -26,7 +26,7 @@ public class Lobby : MonoBehaviour {
 	
 	
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Return)) {
+		if (Input.GetKeyDown(KeyCode.Return) && JoinObjects.Count > 0) {
 			GoToGame();
 		}
 

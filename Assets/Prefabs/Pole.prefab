@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4551541924422586}
   - component: {fileID: 120804576946259178}
+  - component: {fileID: 68507483299202940}
   m_Layer: 0
   m_Name: LineParent
   m_TagString: Untagged
@@ -52,8 +53,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1913549588128788}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 4}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4551541924422586}
   m_Father: {fileID: 0}
@@ -66,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1350216166817900}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.45}
+  m_LocalPosition: {x: 0, y: 0, z: -0.146}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4442382855110044}
@@ -85,6 +86,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
+  - {fileID: 2100000, guid: 566fa0227679e834e8e49b9d71464424, type: 2}
   - {fileID: 2100000, guid: 787484a42e725ff4e8d4b68f7a41b2a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -110,7 +112,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1913549588128788}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300000, guid: 11bc2005efa3b8a4ca70be136a218c94, type: 3}
 --- !u!61 &61820185411701506
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -136,6 +138,23 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!68 &68507483299202940
+EdgeCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1350216166817900}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: 0, y: 0}
+  - {x: 1.1560767, y: 3.1927876}
 --- !u!120 &120804576946259178
 LineRenderer:
   m_ObjectHideFlags: 1
@@ -169,11 +188,11 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  - {x: 2.1739233, y: 2.0372124, z: -1.246}
+  - {x: 3.33, y: 5.23, z: -1.246}
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 0.1
+    widthMultiplier: 0.2
     widthCurve:
       serializedVersion: 2
       m_Curve:
