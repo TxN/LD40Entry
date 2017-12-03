@@ -15,6 +15,9 @@ public class TrackNode : MonoBehaviour {
 	public GameObject pole2;
 	private Vector2 pos;
 
+    private float _lastP1Shift = 0f;
+    private float _lastP2Shift = 0f;
+
 	public void Init(TrackNode prev)
 	{
 		// FIXME: it is workaround for first empty track-node
@@ -42,6 +45,13 @@ public class TrackNode : MonoBehaviour {
 		pole2.transform.rotation = prev.transform.rotation;
 
 		previous.next = this;
+
+        var bcol = gameObject.AddComponent<BoxCollider2D>();
+        bcol.isTrigger = true;
+        float width = -pole1Shift + pole2Shift;
+
+        bcol.size = new Vector2(width, 0.35f);
+        bcol.offset = new Vector2((pole1Shift+pole2Shift)*0.5f, 0);
 
 		MovePoles ();
 	}
@@ -77,7 +87,23 @@ public class TrackNode : MonoBehaviour {
 
 	protected void MovePoles()
 	{
+        if (_lastP1Shift == pole1Shift && _lastP2Shift == pole2Shift) {
+            return;
+        }
+        _lastP1Shift = pole1Shift;
+        _lastP2Shift = pole2Shift;
+
 		pole1.transform.localPosition = new Vector3 (pole1Shift, 0, 0);
 		pole2.transform.localPosition = new Vector3 (pole2Shift, 0, 0);
+
+        var bcol = gameObject.GetComponent<BoxCollider2D>();
+        if (!bcol) {
+            bcol = gameObject.AddComponent<BoxCollider2D>();
+        }
+        bcol.isTrigger = true;
+        float width = -pole1Shift + pole2Shift;
+
+        bcol.size = new Vector2(width, 0.35f);
+        bcol.offset = new Vector2((pole1Shift + pole2Shift) * 0.5f, 0);
 	}
 }
