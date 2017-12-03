@@ -154,7 +154,7 @@ public class Player : MonoBehaviour {
         Kill();
     }
 
-	void OnTriggerEnter(Collider collider) {
+	void OnTriggerEnter2D(Collider2D collider) {
 		TrackNode trackNode = collider.GetComponent<TrackNode>();
 		if (trackNode) {
 			int trackNodeIndex = trackNode.GetIndex ();
@@ -162,6 +162,7 @@ public class Player : MonoBehaviour {
 			if (lastPassedWaypoint < trackNodeIndex || (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1)) {
 				waypointSum += WAYPOINT_VALUE;
 				lastPassedWaypoint = trackNodeIndex;
+				Debug.Log (lastPassedWaypoint);
 			}
 		}
 	}
