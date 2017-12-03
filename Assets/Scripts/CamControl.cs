@@ -20,6 +20,8 @@ public class CamControl : MonoBehaviour {
     float initZ = 0;
     float moveError;
 
+    Vector3 _lastPos = new Vector3();
+
     void Awake() {
         Instance = this;
     }
@@ -38,11 +40,12 @@ public class CamControl : MonoBehaviour {
     }
 	
 	void LateUpdate () {
-        moveError = Vector3.Distance(transform.position, player.position) - initDelta;
+        moveError = Vector3.Distance(_lastPos, player.position);
         float cLerp = lerpCoef.Evaluate(moveError);
-        Vector3 newPos = Vector3.Lerp(transform.position, player.position, cLerp);
+        Vector3 newPos = Vector3.Lerp(transform.position, player.position, cLerp * Time.deltaTime *5f);
         newPos.z = initZ;
         transform.position = newPos;
+        _lastPos = player.position;
 	}
 
     public float Map(float value, float fromSource, float toSource, float fromTarget, float toTarget, bool clamp = false) {

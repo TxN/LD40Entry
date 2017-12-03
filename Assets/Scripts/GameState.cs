@@ -102,6 +102,10 @@ public class GameState : MonoBehaviour {
 		return Players.OrderByDescending (item => item.waypointSum).ToList().First();
 	}
 
+    void Update() {
+        CamControl.Instance.player = GetFirstPlayer().transform;
+    }
+
     void OnPauseToggle(Event_Paused e) {
         PauseEnabled = !PauseEnabled;
     }
