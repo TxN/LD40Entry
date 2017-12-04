@@ -1,5 +1,6 @@
 ﻿using EventSys;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class InputManager : MonoBehaviour {
 	const float ANGLE_PRECISION = 0.1f;
@@ -29,7 +30,10 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public float GetDirection (){
-		Vector2 vec = new Vector2(Input.GetAxis(_directionAxisX), Input.GetAxis(_directionAxisY));
+		Vector2 vec = new Vector2(
+			Input.GetAxis(InputManager.GetKey(_directionAxisX)),
+			Input.GetAxis(InputManager.GetKey(_directionAxisY))
+		);
 
 		if (IsZeroAngle (vec)) {
 			return _directionAngle;
@@ -40,13 +44,16 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public  Vector2 GetLaunchDirection(){
-		Vector2 vec = new Vector2(Input.GetAxis(_launchAxisX), Input.GetAxis(_launchAxisY));
+		Vector2 vec = new Vector2(
+			Input.GetAxis(InputManager.GetKey(_launchAxisX)),
+			Input.GetAxis(InputManager.GetKey(_launchAxisY))
+		);
         return vec.normalized;
 	}
 
 	public float GetMoveAcceleration (){
 
-        return Input.GetAxis(_moveTrigger);
+		return Input.GetAxis(InputManager.GetKey(_moveTrigger));
 
         /*if (Input.GetButton (_moveTrigger)) {
 			return 1f;
@@ -58,16 +65,31 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public bool GetLaunchTrigger() {
-		return Input.GetButtonDown (_launchTrigger);
+		return Input.GetButtonDown (InputManager.GetKey(_launchTrigger));
 	}
 
 	void Update() {
-		if (Input.GetButtonDown (_pauseTrigger)) {
+		if (Input.GetButtonDown (InputManager.GetKey(_pauseTrigger))) {
 			EventManager.Fire (new Event_Paused());
 		}
 	}
 
 	protected bool IsZeroAngle(Vector2 vec) {
 		return vec.magnitude - ANGLE_PRECISION <= 0;
+	}
+
+	public static string GetKey(string key) {
+		if (key.StartsWith ("kb")) {
+			return key;
+		}
+
+		string postfix = "_";
+		if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
+			postfix += "osx";
+		} else {
+			postfix += "win";
+		}
+			
+		return key + postfix;
 	}
 }

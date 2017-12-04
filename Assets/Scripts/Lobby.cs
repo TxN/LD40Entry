@@ -32,7 +32,7 @@ public class Lobby : MonoBehaviour {
 
 		int i = 0;
 		while (i < joinKeys.Count) {
-			if (Input.GetButtonDown (joinKeys [i])) {
+			if (Input.GetButtonDown (InputManager.GetKey(joinKeys [i]))) {
 				PlayerInfo info = _holder.playersInfos.Find(infs => infs.prefix == joinKeysPrefixes[i]);
 				if ( info != null ) {
 					_holder.RemovePlayerInfo(info);
