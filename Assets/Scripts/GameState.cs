@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EventSys;
 using System.Linq;
+using UnityEngine.UI;
 
 public class GameState : MonoBehaviour {
 
@@ -11,6 +12,7 @@ public class GameState : MonoBehaviour {
     public GameObject PlayerPrefab = null;
 	public GameObject MinePrefab = null;
     public GameObject PauseMenu = null;
+    public Text WinBanner = null;
     public TrackNode FirstTrackNode = null;
 
     public List<Transform> StartPoints = new List<Transform>();
@@ -194,6 +196,11 @@ public class GameState : MonoBehaviour {
         CamControl.Instance.GetComponentInChildren<CameraShake>().ShakeCamera(1, 0.7f);
 
         if (Players.Count <= 1) {
+            if (Players.Count == 1 && WinBanner) {
+                WinBanner.text = string.Format("PLAYER {0} WINS!", Players[0].Index + 1 );
+                WinBanner.color = Players[0].PlayerColor;
+                WinBanner.gameObject.SetActive(true);
+            }
             Invoke("EndGame",1.5f);
         }
     }

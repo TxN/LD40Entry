@@ -24,6 +24,11 @@ public class Player : MonoBehaviour {
     InputManager _input = null;
 
     Color _shipColor = Color.white;
+    public Color PlayerColor {
+        get {
+            return _shipColor;
+        }
+    }
     int   _playerIndex = 0;
 
     int _collectedMines = 0;

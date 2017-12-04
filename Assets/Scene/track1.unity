@@ -6588,6 +6588,7 @@ MonoBehaviour:
     type: 2}
   MinePrefab: {fileID: 1465748784053424, guid: 2a8b68becc8dad345a777ca05b901c93, type: 2}
   PauseMenu: {fileID: 2144351126}
+  WinBanner: {fileID: 2144351127}
   FirstTrackNode: {fileID: 1523659325}
   StartPoints:
   - {fileID: 581213915}
@@ -25449,3 +25450,9 @@ GameObject:
   m_PrefabParentObject: {fileID: 1279302172890154, guid: b54389e491a49d04eb70f9605c262ac1,
     type: 2}
   m_PrefabInternal: {fileID: 2144351125}
+--- !u!114 &2144351127 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114658941895636116, guid: b54389e491a49d04eb70f9605c262ac1,
+    type: 2}
+  m_PrefabInternal: {fileID: 2144351125}
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
