@@ -41,7 +41,7 @@ public class GameState : MonoBehaviour {
         }
     }
 
-    int _maximumMines = 10;
+    int _maximumMines = 6;
 
     bool _pauseFlag = false;
 
@@ -195,7 +195,7 @@ public class GameState : MonoBehaviour {
         }
     }
 
-    void EndGame() {
+    public void EndGame() {
         UnityEngine.SceneManagement.SceneManager.LoadScene("JoinScreen");
     }
 }

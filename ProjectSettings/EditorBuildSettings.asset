@@ -9,8 +9,5 @@ EditorBuildSettings:
     path: Assets/Scene/JoinScreen.unity
     guid: 1e1b0d178e4b8824fae8cbc7730908f8
   - enabled: 1
-    path: Assets/Scene/MainScene.unity
-    guid: 4c6a3f43c4ccf0246bb083a7588a98f8
-  - enabled: 1
     path: Assets/Scene/track1.unity
     guid: f2354a381fdcf9b4eab2686aafd7bff3

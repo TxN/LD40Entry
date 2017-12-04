@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 08ee162f2e3430a4abc7380b9f5bdf0e
+timeCreated: 1512384362
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: RuneScape UF
+  fontNames:
+  - RuneScape UF
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 2
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
