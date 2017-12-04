@@ -70,7 +70,7 @@ public class InputManager : MonoBehaviour {
 	}
 
     public bool GetDashTrigger() {
-        return Input.GetButtonDown(_dashTrigger);
+		return Input.GetButtonDown(InputManager.GetKey(_dashTrigger));
     }
 
 	void Update() {

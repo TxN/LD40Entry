@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 public class Lobby : MonoBehaviour {
 	public GameObject playersInfosGameObject;
 
-	public List<string> joinKeys = new List <string>() {"kb1_join"}; //TODO
-	public List<string> joinKeysPrefixes = new List <string>() {"kb1"}; //TODO
+	public List<string> joinKeys = new List <string>() {};
+	public List<string> joinKeysPrefixes = new List <string>() {};
     const string READY_KEY = "_pause";
 
 	public List<GameObject> JoinObjects = new List<GameObject>();
@@ -59,7 +59,7 @@ public class Lobby : MonoBehaviour {
 			i++;
 		}
         foreach (var player in _holder.playersInfos) {
-            if (Input.GetButtonDown(player.prefix + READY_KEY)) {
+			if (Input.GetButtonDown(InputManager.GetKey(player.prefix + READY_KEY))) {
                 player.ready = !player.ready;
                 GameObject readyGOParent = JoinObjects.Find(objs => objs.name == player.prefix);
                 readyGOParent.transform.Find("ReadyFlag").gameObject.SetActive(player.ready);
