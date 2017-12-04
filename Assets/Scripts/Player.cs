@@ -39,6 +39,8 @@ public class Player : MonoBehaviour {
     Rigidbody2D _rb = null;
     float _initDrag = 0;
 
+    bool _becameInvisibleFlag = false;
+
     public bool Alive {
         get {
             return _isAlive;
@@ -83,9 +85,7 @@ public class Player : MonoBehaviour {
 		deadObject.SetActive(true);
 		var parts = deadObject.GetComponent<ParticleSystem>().main;
 		parts.startColor = _shipColor;
-		//deadObject.GetComponent<ParticleSystem>().main = parts;
 		Destroy(gameObject);
-        //Spawn death prefab and etc
     }
 
 
@@ -110,6 +110,10 @@ public class Player : MonoBehaviour {
 
         if (_input.GetLaunchTrigger() && _collectedMines > 0 ) {
             LaunchMine(-_input.GetLaunchDirection());
+        }
+
+        if (_input.GetDashTrigger()) {
+            _rb.AddForce(-_input.GetLaunchDirection() * MAX_ACCELERATION * 0.5f, ForceMode2D.Impulse);
         }
     }
 
@@ -155,11 +159,19 @@ public class Player : MonoBehaviour {
         _rb.drag = _initDrag + _initDrag * ((float)_collectedMines / GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
     }
 
+
     void Update() {
         ProcessControls();
         var tgAngle = Quaternion.Euler(0, 0, _rotationAngle);
 		_rb.MoveRotation(_rotationAngle);
        // transform.rotation = Quaternion.Lerp(transform.rotation, tgAngle, ROT_SMOOTH_COEF);
+        if (!GetComponent<Renderer>().isVisible) {
+
+        }
+        if (_becameInvisibleFlag) {
+            Kill();
+            Debug.Log("Death " + _playerIndex);
+        }
     }
 
     void FixedUpdate() {
@@ -177,8 +189,7 @@ public class Player : MonoBehaviour {
         if (this == null) {
             return;
         }
-        Kill();
-        Debug.Log("Death " + _playerIndex);
+        _becameInvisibleFlag = true;
     }
 
 	void OnTriggerEnter2D(Collider2D collider) {

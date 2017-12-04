@@ -13,12 +13,12 @@ public class InputManager : MonoBehaviour {
 	private string _backMoveTrigger;
 	private string _launchTrigger;
 	private string _pauseTrigger;
+    private string _dashTrigger;
 
 	private float _directionAngle = 0f;
 	private float _launchAngle = 0f;
 
-	public void Init(string prefix)
-	{
+	public void Init(string prefix) {
 		_directionAxisX = prefix + "_direction_x";
 		_directionAxisY = prefix + "_direction_y";
 		_launchAxisX = prefix + "_launch_x";
@@ -27,6 +27,7 @@ public class InputManager : MonoBehaviour {
 		_backMoveTrigger = prefix + "_move_bk";
 		_launchTrigger = prefix + "_launch";
 		_pauseTrigger = prefix + "_pause";
+        _dashTrigger = prefix + "_dash";
 	}
 
 	public float GetDirection (){
@@ -67,6 +68,10 @@ public class InputManager : MonoBehaviour {
 	public bool GetLaunchTrigger() {
 		return Input.GetButtonDown (InputManager.GetKey(_launchTrigger));
 	}
+
+    public bool GetDashTrigger() {
+        return Input.GetButtonDown(_dashTrigger);
+    }
 
 	void Update() {
 		if (Input.GetButtonDown (InputManager.GetKey(_pauseTrigger))) {

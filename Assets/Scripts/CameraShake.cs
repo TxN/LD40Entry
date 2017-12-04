@@ -33,7 +33,6 @@ public class CameraShake : MonoBehaviour {
     }
 
     public void ShakeCamera(float amount, float duration) {
-
         shakeAmount += amount;//Add to the current amount.
         startAmount = shakeAmount;//Reset the start amount, to determine percentage.
         shakeDuration += duration;//Add to the current time.
@@ -63,7 +62,7 @@ public class CameraShake : MonoBehaviour {
 
             yield return null;
         }
-        transform.localRotation = _initRotation;//Set the local rotation to 0 when done, just to get rid of any fudging stuff.
+        //transform.localRotation = _initRotation;//Set the local rotation to 0 when done, just to get rid of any fudging stuff.
         isRunning = false;
     }
 
