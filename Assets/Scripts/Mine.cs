@@ -5,7 +5,7 @@ using EventSys;
 
 public class Mine : MonoBehaviour {
 
-    const float LAUNCH_FORCE = 5f;
+    const float LAUNCH_FORCE = 2f;
 
     public GameObject ExplosionFab = null;
 
@@ -13,6 +13,8 @@ public class Mine : MonoBehaviour {
     Collider2D _col = null;
     bool _mineEnabled = true;
     bool _appeared = false;
+	bool _forceFlag = false;
+	Vector2 _lastSpeedVector;
 
     public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
         _rb = gameObject.GetComponent<Rigidbody2D>();
@@ -21,10 +23,28 @@ public class Mine : MonoBehaviour {
         _col = GetComponent<Collider2D>();
         _col.enabled = false;
         Invoke("EnableCollision", 0.05f);
+
+		_forceFlag = true;
+		_lastSpeedVector = new Vector2(speedVector.x, speedVector.y);
+		Invoke("DisableForce", 0.15f);
+
         //Invoke("EnableMine", 0.05f);
     }
 
-    void Explode() {
+	void Update()
+	{ 
+		if (_forceFlag)
+		{
+			_rb.AddForce(_lastSpeedVector, ForceMode2D.Impulse);
+		}
+	}
+
+	void DisableForce()
+	{
+		_forceFlag = false;
+	}
+
+	void Explode() {
         Instantiate(ExplosionFab, transform.position, Quaternion.identity);
 		Destroy(this.gameObject);
     }
