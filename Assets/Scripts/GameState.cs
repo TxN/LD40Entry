@@ -90,7 +90,7 @@ public class GameState : MonoBehaviour {
 		int minesTotal = Players.Count * MaxMinesBeforeExplosion + Players.Count;
 		//TODO: what will be if minesTotal > trackNodesTotal
 
-		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal * Players.Count;
+		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal;
 		int minTrackNodesBetweenMines = maxTrackNodesBetweenMines / 2;
 
 		int lastTrackNodeIndexWithMine = 1; // fist spawned mine
@@ -102,7 +102,7 @@ public class GameState : MonoBehaviour {
 			} while (minePositionOffset == 0);
 
 			int position = lastTrackNodeIndexWithMine + minePositionOffset;
-			TrackNode trackNode = _trackNodes [Mathf.Clamp(position - 1,0, _trackNodes.Count -1)]; //TODO: fix algorithm
+			TrackNode trackNode = _trackNodes [position - 1];
 			lastTrackNodeIndexWithMine = position;
 
 			GameObject mineGo = Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
