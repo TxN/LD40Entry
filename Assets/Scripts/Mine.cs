@@ -19,13 +19,13 @@ public class Mine : MonoBehaviour {
     public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _rb.velocity = initSpeed + speedVector * LAUNCH_FORCE;
-       // _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
+        _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
         _col = GetComponent<Collider2D>();
         _col.enabled = false;
         Invoke("EnableCollision", 0.05f);
 
 		_forceFlag = true;
-		_lastSpeedVector = new Vector2(speedVector.x, speedVector.y);
+		_lastSpeedVector = speedVector * 0.5f;
 		Invoke("DisableForce", 0.15f);
 
         //Invoke("EnableMine", 0.05f);
@@ -35,7 +35,7 @@ public class Mine : MonoBehaviour {
 	{ 
 		if (_forceFlag)
 		{
-			_rb.AddForce(_lastSpeedVector, ForceMode2D.Impulse);
+			_rb.AddForce(_lastSpeedVector, ForceMode2D.Force);
 		}
 	}
 

@@ -162,7 +162,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 3117301ecf1c8e04fa5d0250f98f1efe, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.476
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -273,3 +273,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EulersPerSecond: {x: 60, y: 60, z: 60}
+  RandomizeStartRotation: 0
+  RandomizeStartScale: 0
+  RandomizeRotSpeed: 0

@@ -75,7 +75,6 @@ public class CamControl : MonoBehaviour {
     }
 
     void OnLapChanged(Event_LapPassed e) {
-        Debug.Log("Lap Changed");
         MultiplyInitZ(CamCoeffs[Mathf.Clamp(e.lap - 1, 0, CamCoeffs.Count - 1)]);
     }
 

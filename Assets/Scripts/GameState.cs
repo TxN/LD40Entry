@@ -44,7 +44,7 @@ public class GameState : MonoBehaviour {
         }
     }
 
-    int _maximumMines = 6;
+    int _maximumMines = 5;
 
     bool _pauseFlag = false;
 	int _pauseSelection = 0;
@@ -93,7 +93,7 @@ public class GameState : MonoBehaviour {
 
 	void SpawnMines() {
 		int trackNodesTotal = FindObjectsOfType<TrackNode> ().Length;
-		int minesTotal = Players.Count * MaxMinesBeforeExplosion + Players.Count;
+		int minesTotal = Players.Count * MaxMinesBeforeExplosion + Players.Count*3;
 		//TODO: what will be if minesTotal > trackNodesTotal
 
 		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal;

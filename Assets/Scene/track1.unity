@@ -6571,6 +6571,7 @@ GameObject:
   - component: {fileID: 508456955}
   - component: {fileID: 508456954}
   - component: {fileID: 508456956}
+  - component: {fileID: 508456957}
   m_Layer: 0
   m_Name: GameState
   m_TagString: Untagged
@@ -6696,6 +6697,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &508456957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 508456953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7d3cac454f42b24e8a9ef65c41aee0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &513364230
 Prefab:
   m_ObjectHideFlags: 0
