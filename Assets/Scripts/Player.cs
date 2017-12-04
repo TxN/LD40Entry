@@ -24,6 +24,8 @@ public class Player : MonoBehaviour {
 
     InputManager _input = null;
 
+    public AudioSource PickupSource = null;
+
     Color _shipColor = Color.white;
     public Color PlayerColor {
         get {
@@ -100,6 +102,7 @@ public class Player : MonoBehaviour {
         if (e.playerIndex == _playerIndex) {
             _collectedMines++;
         }
+        PickupSource.Play();
 		UpdateInternals();
     }
 
