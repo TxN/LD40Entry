@@ -179,6 +179,7 @@ public class GameState : MonoBehaviour {
 
     void OnPauseToggle(Event_Paused e) {
         PauseEnabled = !PauseEnabled;
+        PauseMenu.SetActive(PauseEnabled);
     }
 
     void OnDestroy() {

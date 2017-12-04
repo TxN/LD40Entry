@@ -6558,7 +6558,7 @@ MonoBehaviour:
   PlayerPrefab: {fileID: 1858177136524362, guid: ad96dd880b603554184f7fe55a5b68aa,
     type: 2}
   MinePrefab: {fileID: 1465748784053424, guid: 2a8b68becc8dad345a777ca05b901c93, type: 2}
-  PauseMenu: {fileID: 0}
+  PauseMenu: {fileID: 2144351126}
   FirstTrackNode: {fileID: 1523659325}
   StartPoints:
   - {fileID: 581213915}
@@ -25415,3 +25415,8 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b54389e491a49d04eb70f9605c262ac1, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &2144351126 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1279302172890154, guid: b54389e491a49d04eb70f9605c262ac1,
+    type: 2}
+  m_PrefabInternal: {fileID: 2144351125}
