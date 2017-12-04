@@ -179,6 +179,7 @@ public class GameState : MonoBehaviour {
     Player _leader = null;
 
     void Update() {
+        _cachedLapCount = LapCount;
         _leader = GetFirstPlayer();
         if (_leader != null) {
             CamControl.Instance.player = GetFirstPlayer().transform;
@@ -260,12 +261,22 @@ public class GameState : MonoBehaviour {
         UnityEngine.SceneManagement.SceneManager.LoadScene("JoinScreen");
     }
 
+    int _cachedLapCount = 1;
+    int _lastLapNum = 1;
     int LapCount {
         get {
             if ( _leader == null) {
-                return 1;
+                return _lastLapNum;
             }
-            return 1 + (_leader.waypointSum / _trackNodes.Count);
+            var newLapNum = 1 + (_leader.waypointSum / _trackNodes.Count);
+            if (newLapNum != _lastLapNum) {
+                EventManager.Fire<Event_LapPassed>(new Event_LapPassed() { lap = _lastLapNum });
+                _lastLapNum = newLapNum;
+            }
+            return _lastLapNum;
         }
     }
+
+
+
 }

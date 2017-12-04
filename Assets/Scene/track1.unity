@@ -4876,6 +4876,11 @@ MonoBehaviour:
   initDelta: 10
   MinFOV: 45
   MaxFOV: 65
+  CamCoeffs:
+  - 1
+  - 0.8
+  - 0.75
+  - 0.6
 --- !u!4 &384675054
 Transform:
   m_ObjectHideFlags: 0
@@ -4883,7 +4888,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 384675052}
   m_LocalRotation: {x: 0, y: -1, z: 0, w: 0.00000028088027}
-  m_LocalPosition: {x: 0, y: -1.37, z: 10.08}
+  m_LocalPosition: {x: 0, y: -1.37, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 249639614}

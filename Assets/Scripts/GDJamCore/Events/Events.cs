@@ -21,4 +21,8 @@
 
 	public struct Event_SelectPauseMenuItem {
 	}
+
+    public struct Event_LapPassed {
+       public int lap;
+    }
 }
