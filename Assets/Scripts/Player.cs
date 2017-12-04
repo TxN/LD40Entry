@@ -8,7 +8,7 @@ public class Player : MonoBehaviour {
     const float MAX_ACCELERATION = 5f;
     const float MINE_DECC_PERCENT = 0.2f;
 	const float MINE_LAUNCH_COOLDOWN = 0.5f;
-	const float MINE_LAUNCH_MIN_DISTANCE = 1f;
+	const float MINE_LAUNCH_MIN_DISTANCE = 1.3f;
 	const int WAYPOINT_VALUE = 1;
 
 
