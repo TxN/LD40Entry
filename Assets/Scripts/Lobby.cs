@@ -2,12 +2,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
 public class Lobby : MonoBehaviour {
 	public GameObject playersInfosGameObject;
 
 	public List<string> joinKeys = new List <string>() {"kb1_join"}; //TODO
 	public List<string> joinKeysPrefixes = new List <string>() {"kb1"}; //TODO
+    const string READY_KEY = "_pause";
 
 	public List<GameObject> JoinObjects = new List<GameObject>();
 
@@ -22,10 +22,15 @@ public class Lobby : MonoBehaviour {
 
 		playersInfosGameObject = new GameObject();
 		_holder = playersInfosGameObject.AddComponent <PlayerInfoHolder>();
+
 	}
-	
+
+    bool _lockFlag = false;
 	
 	void Update () {
+        if (_lockFlag) {
+            return;
+        }
 		if (Input.GetKeyDown(KeyCode.Return) && JoinObjects.Count > 0) {
 			GoToGame();
 		}
@@ -53,6 +58,29 @@ public class Lobby : MonoBehaviour {
 			}
 			i++;
 		}
+        foreach (var player in _holder.playersInfos) {
+            if (Input.GetButtonDown(player.prefix + READY_KEY)) {
+                player.ready = !player.ready;
+                GameObject readyGOParent = JoinObjects.Find(objs => objs.name == player.prefix);
+                readyGOParent.transform.Find("ReadyFlag").gameObject.SetActive(player.ready);
+            }
+        }
+
+        bool _allReady = true;
+        if (_holder.playersInfos.Count > 1) {
+            foreach (var player in _holder.playersInfos) {
+                if (!player.ready) {
+                    _allReady = false;
+                }
+            }
+        } else {
+            _allReady = false;
+        }
+
+        if (_allReady) {
+            _lockFlag = true;
+            Invoke("GoToGame",0.5f);
+        }
 	}
 
 	void GoToGame() {
