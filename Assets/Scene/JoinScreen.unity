@@ -216,10 +216,14 @@ MonoBehaviour:
   - kb1_join
   - j1_join
   - j2_join
+  - j3_join
+  - j4_join
   joinKeysPrefixes:
   - kb1
   - j1
   - j2
+  - j3
+  - j4
   JoinObjects:
   - {fileID: 701887884}
   - {fileID: 1793029061}
@@ -244,7 +248,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 259304835}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70f4f5a5de22e454599f51f60dfa7109, type: 3}
   m_Name: 

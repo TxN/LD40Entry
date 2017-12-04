@@ -4,6 +4,7 @@ using UnityEditor;
 public class TrackSetup : MonoBehaviour {
 	[MenuItem("Tools/Setup Track")]
 	public static void SetupTrack() {
+        var TrackHolder = FindObjectOfType<RacetrackHolder>();
 		var nodes = FindObjectsOfType<TrackNode>();
 		foreach (var node in nodes) {
 			if (node.next == null) {
