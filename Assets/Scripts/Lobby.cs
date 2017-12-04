@@ -13,14 +13,13 @@ public class Lobby : MonoBehaviour {
 
 	PlayerInfoHolder _holder = null;
 
-
 	void Start () {
 		PlayerInfoHolder oldHolder = FindObjectOfType<PlayerInfoHolder>();
 		if ( oldHolder != null ) {
 			Destroy(oldHolder.gameObject);
 		}
 
-		playersInfosGameObject = new GameObject();
+        playersInfosGameObject = new GameObject("[PlayerInputHolder]");
 		_holder = playersInfosGameObject.AddComponent <PlayerInfoHolder>();
 
 	}
@@ -55,6 +54,7 @@ public class Lobby : MonoBehaviour {
 						ColorSetter.UpdateModelColor(showGO, col);
 					}
 				}
+                PlayMenuClick();
 			}
 			i++;
 		}
@@ -63,6 +63,7 @@ public class Lobby : MonoBehaviour {
                 player.ready = !player.ready;
                 GameObject readyGOParent = JoinObjects.Find(objs => objs.name == player.prefix);
                 readyGOParent.transform.Find("ReadyFlag").gameObject.SetActive(player.ready);
+                PlayMenuClick();
             }
         }
 
@@ -86,4 +87,17 @@ public class Lobby : MonoBehaviour {
 	void GoToGame() {
 		SceneManager.LoadScene("track1");
 	}
+
+    AudioSource _audioSrc = null;
+    AudioSource AudioSrc{
+        get {
+            if (_audioSrc == null) {
+                _audioSrc = GetComponent<AudioSource>();
+            }
+            return _audioSrc;
+        }
+}
+    void PlayMenuClick() {
+        AudioSrc.Play();
+    }
 }
