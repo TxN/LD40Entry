@@ -9,6 +9,7 @@ public class Player : MonoBehaviour {
     const float MINE_DECC_PERCENT = 0.2f;
 	const float MINE_LAUNCH_COOLDOWN = 0.5f;
 	const float MINE_LAUNCH_MIN_DISTANCE = 1f;
+	const float DASH_COOLDOWN = 2f;
 	const int WAYPOINT_VALUE = 1;
 
 
@@ -34,6 +35,7 @@ public class Player : MonoBehaviour {
     int _collectedMines = 0;
 
 	float _lastMineLaunchTime = 0f;
+	float _lastDashUseTime = 0f;
 
     //=========
     //Movement
@@ -117,8 +119,9 @@ public class Player : MonoBehaviour {
             LaunchMine(-_input.GetLaunchDirection());
         }
 
-        if (_input.GetDashTrigger()) {
-            _rb.AddForce(-_input.GetLaunchDirection() * MAX_ACCELERATION * 0.5f, ForceMode2D.Impulse);
+		if (_input.GetDashTrigger() && Time.time - _lastDashUseTime >= DASH_COOLDOWN) {
+			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * 2f, ForceMode2D.Impulse);
+			_lastDashUseTime = Time.time;
         }
     }
 

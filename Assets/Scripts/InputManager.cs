@@ -49,7 +49,7 @@ public class InputManager : MonoBehaviour {
 		return _directionAngle;
 	}
 
-	public  Vector2 GetLaunchDirection(){
+	public Vector2 GetLaunchDirection(){
 		Vector2 vec = new Vector2(
 			Input.GetAxis(InputManager.GetKey(_launchAxisX)),
 			Input.GetAxis(InputManager.GetKey(_launchAxisY))
