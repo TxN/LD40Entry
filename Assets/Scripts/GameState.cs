@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using EventSys;
 using System.Linq;
 
@@ -44,6 +45,7 @@ public class GameState : MonoBehaviour {
     int _maximumMines = 6;
 
     bool _pauseFlag = false;
+	int _pauseSelection = 0;
 
     public bool PauseEnabled {
         get {
@@ -72,6 +74,8 @@ public class GameState : MonoBehaviour {
 		SpawnMines ();
         EventManager.Subscribe<Event_Paused>(this, OnPauseToggle);
         EventManager.Subscribe<Event_PlayerDead>(this, OnPlayerDead);
+		EventManager.Subscribe<Event_ChangeSelectedPauseMenuItem>(this, OnMenuItemChanged);
+		EventManager.Subscribe<Event_SelectPauseMenuItem> (this, OnMenuItemSelection);
     }
 
     void SpawnPlayers(List<PlayerInfo> players) {
@@ -177,7 +181,52 @@ public class GameState : MonoBehaviour {
         }
     }
 
-    void OnPauseToggle(Event_Paused e) {
+	void OnMenuItemChanged(Event_ChangeSelectedPauseMenuItem e) {
+		int activeItem = _pauseSelection + e.offset;
+		if (activeItem < 0) {
+			activeItem = 0;
+		} else if (activeItem > 2) {
+			activeItem = 2;
+		}
+		_pauseSelection = activeItem;
+
+		List<string> items = new List<string> () { "Continue", "Restart", "Quit" };
+		UpdateMenuColorSelection (items[activeItem]);
+	}
+
+	void OnMenuItemSelection(Event_SelectPauseMenuItem e) {
+		if (PauseEnabled) {
+			switch (_pauseSelection) {
+			case 0:
+				OnPauseToggle ();
+				break;
+			case 1:
+				OnPauseToggle ();
+				EndGame ();
+				break;
+			case 2:
+				OnPauseToggle ();
+				Application.Quit ();
+				break;
+			}
+		}
+	}
+
+	void UpdateMenuColorSelection(string item) {
+		List<string> items = new List<string> () { "Continue", "Restart", "Quit" };
+		items.Remove (item);
+		// Highlight item
+		Color selectedColor = new Color (222, 0, 222);
+		PauseMenu.transform.Find (item).GetComponent<Image> ().color = selectedColor;
+		PauseMenu.transform.Find (item).Find ("Text").GetComponent<Text> ().color = selectedColor;
+		// Restore default color to others
+		for (int i = 0; i < items.Count; i += 1) {
+			PauseMenu.transform.Find (items[i]).GetComponent<Image> ().color = Color.white;
+			PauseMenu.transform.Find (items[i]).Find ("Text").GetComponent<Text> ().color = Color.white;
+		}
+	}
+
+	void OnPauseToggle(Event_Paused e = new Event_Paused()) {
         PauseEnabled = !PauseEnabled;
         PauseMenu.SetActive(PauseEnabled);
     }
@@ -185,6 +234,8 @@ public class GameState : MonoBehaviour {
     void OnDestroy() {
         EventManager.Unsubscribe<Event_Paused>(OnPauseToggle);
         EventManager.Unsubscribe<Event_PlayerDead>(OnPlayerDead);
+		EventManager.Unsubscribe<Event_ChangeSelectedPauseMenuItem> (OnMenuItemChanged);
+		EventManager.Unsubscribe<Event_SelectPauseMenuItem> (OnMenuItemSelection);
     }
 
     void OnPlayerDead(Event_PlayerDead e) {

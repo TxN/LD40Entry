@@ -14,4 +14,11 @@
 
 	public struct Event_Paused {
 	}
+
+	public struct Event_ChangeSelectedPauseMenuItem {
+		public int offset;
+	}
+
+	public struct Event_SelectPauseMenuItem {
+	}
 }

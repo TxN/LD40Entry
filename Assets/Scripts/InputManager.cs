@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class InputManager : MonoBehaviour {
 	const float ANGLE_PRECISION = 0.1f;
+	const int PAUSE_MENU_FRAME_LOCK = 10;
 
 	private string _directionAxisX;
 	private string _directionAxisY;
@@ -12,11 +13,14 @@ public class InputManager : MonoBehaviour {
 	private string _moveTrigger;
 	private string _backMoveTrigger;
 	private string _launchTrigger;
+	private string _joinTrigger;
 	private string _pauseTrigger;
     private string _dashTrigger;
 
 	private float _directionAngle = 0f;
 	private float _launchAngle = 0f;
+
+	private int _pauseMenuActionLockedFrameNumber = 0;
 
 	public void Init(string prefix) {
 		_directionAxisX = prefix + "_direction_x";
@@ -28,6 +32,7 @@ public class InputManager : MonoBehaviour {
 		_launchTrigger = prefix + "_launch";
 		_pauseTrigger = prefix + "_pause";
         _dashTrigger = prefix + "_dash";
+		_joinTrigger = prefix + "_join";
 	}
 
 	public float GetDirection (){
@@ -77,6 +82,26 @@ public class InputManager : MonoBehaviour {
 		if (Input.GetButtonDown (InputManager.GetKey(_pauseTrigger))) {
 			EventManager.Fire (new Event_Paused());
 		}
+
+		GameState state = FindObjectOfType<GameState> ();
+		if (state && state.PauseEnabled) {
+			if (_pauseMenuActionLockedFrameNumber == 0) {
+				var offst = GetPauseMenuDirection ();
+				EventManager.Fire (new Event_ChangeSelectedPauseMenuItem () { offset = offst });
+				_pauseMenuActionLockedFrameNumber = PAUSE_MENU_FRAME_LOCK;
+			} else {
+				_pauseMenuActionLockedFrameNumber -= 1;
+			}
+				
+			if (Input.GetButtonDown(InputManager.GetKey(_joinTrigger))) {
+				EventManager.Fire (new Event_SelectPauseMenuItem ());
+			}
+		}
+	}
+
+	int GetPauseMenuDirection() {
+		int verticalAxisVal = (int)Input.GetAxis (InputManager.GetKey (_directionAxisY));
+		return verticalAxisVal * -1;
 	}
 
 	protected bool IsZeroAngle(Vector2 vec) {
