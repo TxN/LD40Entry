@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Spinner : MonoBehaviour
 {
 	public Vector3 EulersPerSecond;
 	public bool RandomizeStartRotation = false;
-	public bool RandomizeStartScale = false;
-	public bool RandomizeRotSpeed = false;
+	public bool RandomizeStartScale    = false;
+	public bool RandomizeRotSpeed      = false;
 
 	private void Start() {
 		if (RandomizeStartRotation) {
@@ -20,8 +19,7 @@ public class Spinner : MonoBehaviour
 		}
 	}
 
-	void Update()
-	{
+	void Update() {
 		transform.Rotate(EulersPerSecond * Time.deltaTime);
     }
 }

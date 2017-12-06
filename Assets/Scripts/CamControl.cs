@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using EventSys;
 
@@ -12,12 +11,7 @@ public class CamControl : MonoBehaviour {
 
     public float initDelta = 10f;
 
-    public float MinFOV = 45;
-    public float MaxFOV = 65;
-
     Camera _camera;
-
-    float _prevFov = 0;
 
     float initZ = 0;
     float moveError;
@@ -35,16 +29,8 @@ public class CamControl : MonoBehaviour {
 	void Start () {
         initZ = transform.position.z;
         _camera = GetComponent<Camera>();
-        _prevFov = MinFOV;
         EventManager.Subscribe<Event_LapPassed>(this, OnLapChanged);
 	}
-
-    void Update() {
-        //float newFOV = Map(_state.GetShipVelocity, 0, 15, MinFOV, MaxFOV, true);
-        float newFOV = 20;
-        _prevFov = Mathf.Lerp(_prevFov, newFOV, 2 * Time.deltaTime);
-        //_camera.fieldOfView = _prevFov;
-    }
 	
 	void LateUpdate () {
         if (player == null) {
@@ -77,6 +63,4 @@ public class CamControl : MonoBehaviour {
     void OnLapChanged(Event_LapPassed e) {
         MultiplyInitZ(CamCoeffs[Mathf.Clamp(e.lap - 1, 0, CamCoeffs.Count - 1)]);
     }
-
-
 }

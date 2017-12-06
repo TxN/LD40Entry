@@ -1,6 +1,5 @@
 ﻿using EventSys;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class InputManager : MonoBehaviour {
 	const float ANGLE_PRECISION = 0.1f;
@@ -58,16 +57,7 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public float GetMoveAcceleration (){
-
 		return Input.GetAxis(InputManager.GetKey(_moveTrigger));
-
-        /*if (Input.GetButton (_moveTrigger)) {
-			return 1f;
-		} else if (Input.GetButton(_backMoveTrigger)) {
-			return -1f;
-		}
-
-		return 0f;*/
 	}
 
 	public bool GetLaunchTrigger() {

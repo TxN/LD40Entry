@@ -1,13 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using EventSys;
 
 public class IngameMenu : MonoBehaviour {
-
-    void Update() {
-        
-    }
 
     public void OnQuitButton() {
         Application.Quit();

@@ -26,15 +26,22 @@ public class GameState : MonoBehaviour {
 
 	public IngameUI UIHolder = null;
 
-
 	float _startTime = 0f;
 	List<TrackNode> _trackNodes = new List<TrackNode>();
 	Player _leader = null;
 	int _maximumMines = 5;
-	bool _pauseFlag = false;
+
 	int _pauseSelection = 0;
 
+	int _cachedLapCount = 1;
+	int _lastLapNum = 1;
+
 	bool _raceStarted = false;
+	bool _pauseFlag = false;
+
+	//-------------------------------
+	//-------Public properties-------
+	//-------------------------------
 
 	public bool RaceStarted {
 		get {
@@ -57,7 +64,7 @@ public class GameState : MonoBehaviour {
         }
         set {
             _maximumMines = value;
-            EventManager.Fire<Event_MaximumMinesCount_Change>(new Event_MaximumMinesCount_Change() {count = value });
+            EventManager.Fire(new Event_MaximumMinesCount_Change() {count = value });
         }
     }
 
@@ -71,7 +78,25 @@ public class GameState : MonoBehaviour {
         }
     }
 
-    void Awake() {
+	public int LapCount {
+		get {
+			if (_leader == null) {
+				return _lastLapNum;
+			}
+			var newLapNum = 1 + (_leader.waypointSum / _trackNodes.Count);
+			if (newLapNum != _lastLapNum) {
+				EventManager.Fire(new Event_LapPassed() { lap = _lastLapNum });
+				_lastLapNum = newLapNum;
+			}
+			return _lastLapNum;
+		}
+	}
+
+	//-------------------------------
+	//------Unity mono callbacks-----
+	//-------------------------------
+
+	void Awake() {
         if (Instance == null) {
             Instance = this;
         } else if (Instance != this) {
@@ -100,7 +125,37 @@ public class GameState : MonoBehaviour {
 		EventManager.Subscribe<Event_SelectPauseMenuItem> (this, OnMenuItemSelection);
     }
 
-    void SpawnPlayers(List<PlayerInfo> players) {
+	void Update() {
+		_cachedLapCount = LapCount;
+		_leader = GetFirstPlayer();
+		if (_leader != null) {
+			CamControl.Instance.player = GetFirstPlayer().transform;
+		}
+	}
+
+	void OnDestroy() {
+		EventManager.Unsubscribe<Event_Paused>(OnPauseToggle);
+		EventManager.Unsubscribe<Event_PlayerDead>(OnPlayerDead);
+		EventManager.Unsubscribe<Event_ChangeSelectedPauseMenuItem>(OnMenuItemChanged);
+		EventManager.Unsubscribe<Event_SelectPauseMenuItem>(OnMenuItemSelection);
+		if (Instance == this) {
+			Instance = null;
+		}
+	}
+
+	//-------------------------------
+	//--------Public methods---------
+	//-------------------------------
+
+	public void EndGame() {
+		UnityEngine.SceneManagement.SceneManager.LoadScene("JoinScreen");
+	}
+
+	//-------------------------------
+	//--------Private methods--------
+	//-------------------------------
+
+	void SpawnPlayers(List<PlayerInfo> players) {
         for (int i = 0; i < players.Count; i++) {
             GameObject playerGo = Instantiate(PlayerPrefab, StartPoints[i].position, Quaternion.identity, null);
 			var controls = playerGo.AddComponent<InputManager>();
@@ -198,17 +253,26 @@ public class GameState : MonoBehaviour {
 				}
 			}
 		}
-
 		return FirstPlayer;
 	}
 
-    void Update() {
-        _cachedLapCount = LapCount;
-        _leader = GetFirstPlayer();
-        if (_leader != null) {
-            CamControl.Instance.player = GetFirstPlayer().transform;
-        }
-    }
+	void UpdateMenuColorSelection(string item) {
+		List<string> items = new List<string>() { "Continue", "Restart", "Quit" };
+		items.Remove(item);
+		// Highlight item
+		Color selectedColor = new Color(222, 0, 222);
+		PauseMenu.transform.Find(item).GetComponent<Image>().color = selectedColor;
+		PauseMenu.transform.Find(item).Find("Text").GetComponent<Text>().color = selectedColor;
+		// Restore default color to others
+		for (int i = 0; i < items.Count; i += 1) {
+			PauseMenu.transform.Find(items[i]).GetComponent<Image>().color = Color.white;
+			PauseMenu.transform.Find(items[i]).Find("Text").GetComponent<Text>().color = Color.white;
+		}
+	}
+
+	//-------------------------------
+	//---------Event handlers--------
+	//-------------------------------
 
 	void OnMenuItemChanged(Event_ChangeSelectedPauseMenuItem e) {
 		int activeItem = _pauseSelection + e.offset;
@@ -240,31 +304,10 @@ public class GameState : MonoBehaviour {
 			}
 		}
 	}
-
-	void UpdateMenuColorSelection(string item) {
-		List<string> items = new List<string> () { "Continue", "Restart", "Quit" };
-		items.Remove (item);
-		// Highlight item
-		Color selectedColor = new Color (222, 0, 222);
-		PauseMenu.transform.Find (item).GetComponent<Image> ().color = selectedColor;
-		PauseMenu.transform.Find (item).Find ("Text").GetComponent<Text> ().color = selectedColor;
-		// Restore default color to others
-		for (int i = 0; i < items.Count; i += 1) {
-			PauseMenu.transform.Find (items[i]).GetComponent<Image> ().color = Color.white;
-			PauseMenu.transform.Find (items[i]).Find ("Text").GetComponent<Text> ().color = Color.white;
-		}
-	}
-
+	
 	void OnPauseToggle(Event_Paused e = new Event_Paused()) {
         PauseEnabled = !PauseEnabled;
         PauseMenu.SetActive(PauseEnabled);
-    }
-
-    void OnDestroy() {
-        EventManager.Unsubscribe<Event_Paused>(OnPauseToggle);
-        EventManager.Unsubscribe<Event_PlayerDead>(OnPlayerDead);
-		EventManager.Unsubscribe<Event_ChangeSelectedPauseMenuItem> (OnMenuItemChanged);
-		EventManager.Unsubscribe<Event_SelectPauseMenuItem> (OnMenuItemSelection);
     }
 
     void OnPlayerDead(Event_PlayerDead e) {
@@ -278,26 +321,6 @@ public class GameState : MonoBehaviour {
                 WinBanner.gameObject.SetActive(true);
             }
             Invoke("EndGame",1.5f);
-        }
-    }
-
-    public void EndGame() {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("JoinScreen");
-    }
-
-    int _cachedLapCount = 1;
-    int _lastLapNum = 1;
-    int LapCount {
-        get {
-            if ( _leader == null) {
-                return _lastLapNum;
-            }
-            var newLapNum = 1 + (_leader.waypointSum / _trackNodes.Count);
-            if (newLapNum != _lastLapNum) {
-                EventManager.Fire<Event_LapPassed>(new Event_LapPassed() { lap = _lastLapNum });
-                _lastLapNum = newLapNum;
-            }
-            return _lastLapNum;
         }
     }
 }

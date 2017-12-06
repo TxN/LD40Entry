@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using EventSys;
 
 public class Mine : MonoBehaviour {
@@ -27,30 +25,53 @@ public class Mine : MonoBehaviour {
 		_forceFlag = true;
 		_lastSpeedVector = speedVector * 0.5f;
 		Invoke("DisableForce", 0.15f);
-
-        //Invoke("EnableMine", 0.05f);
     }
 
-	void Update()
-	{ 
-		if (_forceFlag)
-		{
+	void Update() { 
+		if (_forceFlag) {
 			_rb.AddForce(_lastSpeedVector, ForceMode2D.Force);
 		}
 	}
 
-	void DisableForce()
-	{
+	void OnCollisionEnter2D(Collision2D coll) {
+		if (!_mineEnabled) {
+			return;
+		}
+
+		_rb.velocity = Vector3.zero;
+		_rb.angularVelocity = 0;
+
+		var player = coll.gameObject.GetComponent<Player>();
+		if (!player) {
+			player = coll.otherCollider.gameObject.GetComponent<Player>();
+		}
+		if (player && player.CanAcceptMine) {
+			EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index });
+			Collect();
+		}
+	}
+
+	void OnBecameVisible() {
+		_appeared = true;
+	}
+
+	void OnBecameInvisible() {
+		if (_appeared) {
+			Explode();
+		}
+	}
+
+	void DisableForce() {
 		_forceFlag = false;
 	}
 
 	void Explode() {
         Instantiate(ExplosionFab, transform.position, Quaternion.identity);
-		Destroy(this.gameObject);
+		Destroy(gameObject);
     }
 
     void Collect() {
-		Destroy(this.gameObject);
+		Destroy(gameObject);
     }
 
     void EnableMine() {
@@ -59,34 +80,5 @@ public class Mine : MonoBehaviour {
 
     void EnableCollision() {
         _col.enabled = true;
-    }
-
-    void OnCollisionEnter2D(Collision2D coll) {
-        if (!_mineEnabled) {
-            return;
-        }
-
-        _rb.velocity = Vector3.zero;
-        _rb.angularVelocity = 0;
-        
-        var player = coll.gameObject.GetComponent<Player>();
-        if (!player) {
-            player = coll.otherCollider.gameObject.GetComponent<Player>();
-        }
-        if (player && player.CanAcceptMine) {
-            EventManager.Fire<Event_PlayerMineCollect>(new Event_PlayerMineCollect() { playerIndex = player.Index });
-            Collect();
-        }
-    }
-
-    void OnBecameVisible() {
-        _appeared = true;
-    }
-
-    void OnBecameInvisible() {
-		if (_appeared) {
-			Explode();
-		}
-       
     }
 }
