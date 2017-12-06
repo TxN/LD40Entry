@@ -50,6 +50,8 @@ public class Player : MonoBehaviour {
 
     bool _becameInvisibleFlag = false;
 
+	bool _controlsEnabled = false;
+
     public bool Alive {
         get {
             return _isAlive;
@@ -58,7 +60,7 @@ public class Player : MonoBehaviour {
 
     public bool CanAcceptMine {
         get {
-			return _isAlive;// && _collectedMines < GameState.Instance.MaxMinesBeforeExplosion;
+			return _isAlive;
         }
     }
 
@@ -82,6 +84,7 @@ public class Player : MonoBehaviour {
 
         EventManager.Subscribe<Event_PlayerMineCollect>(this, OnMineCollect);
 		EventManager.Subscribe<Event_MaximumMinesCount_Change>(this, OnMineMaxCountChange);
+		EventManager.Subscribe<Event_ControlsLockState_Change>(this, OnControlsLockStateChange);
     }
 
 	[ContextMenu("DIE!")]
@@ -110,9 +113,13 @@ public class Player : MonoBehaviour {
 		UpdateInternals();
 	}
 
+	void OnControlsLockStateChange(Event_ControlsLockState_Change e) {
+		_controlsEnabled = e.ControlsEnabled;
+	}
+
 
 	void ProcessControls() {
-        if (!_isAlive) {
+        if (!_isAlive || !_controlsEnabled) {
             return;
         }
         _rotationAngle = _input.GetDirection();
@@ -175,10 +182,7 @@ public class Player : MonoBehaviour {
         ProcessControls();
         var tgAngle = Quaternion.Euler(0, 0, _rotationAngle);
 		_rb.MoveRotation(_rotationAngle);
-       // transform.rotation = Quaternion.Lerp(transform.rotation, tgAngle, ROT_SMOOTH_COEF);
-        if (!GetComponent<Renderer>().isVisible) {
 
-        }
         if (_becameInvisibleFlag) {
             Kill();
             Debug.Log("Death " + _playerIndex);
@@ -194,6 +198,7 @@ public class Player : MonoBehaviour {
     void OnDestroy() {
         EventManager.Unsubscribe<Event_PlayerMineCollect>(OnMineCollect);
         EventManager.Unsubscribe<Event_MaximumMinesCount_Change>(OnMineMaxCountChange);
+		EventManager.Unsubscribe<Event_ControlsLockState_Change>(OnControlsLockStateChange);
     }
 
     void OnBecameInvisible() {

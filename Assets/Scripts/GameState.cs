@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using EventSys;
 using System.Linq;
-using UnityEngine.UI;
 
 public class GameState : MonoBehaviour {
 
@@ -19,17 +17,36 @@ public class GameState : MonoBehaviour {
     public List<Transform> StartPoints = new List<Transform>();
 
     public List<Player> Players = new List<Player>();
-	public Player FirstPlayer = null;
-
-    float _startTime = 0f;
-
-    List<TrackNode> _trackNodes = new List<TrackNode>();
 
     [HideInInspector]
     public TrackNode CurrentNode = null;
 
-    public float TimeFromStart {
+	[HideInInspector]
+	public Player FirstPlayer = null;
+
+	public IngameUI UIHolder = null;
+
+
+	float _startTime = 0f;
+	List<TrackNode> _trackNodes = new List<TrackNode>();
+	Player _leader = null;
+	int _maximumMines = 5;
+	bool _pauseFlag = false;
+	int _pauseSelection = 0;
+
+	bool _raceStarted = false;
+
+	public bool RaceStarted {
+		get {
+			return _raceStarted;
+		}
+	}
+
+	public float TimeFromStart {
         get {
+			if (!RaceStarted) {
+				return 0;
+			}
             return Time.time - _startTime;
         }
     }
@@ -43,11 +60,6 @@ public class GameState : MonoBehaviour {
             EventManager.Fire<Event_MaximumMinesCount_Change>(new Event_MaximumMinesCount_Change() {count = value });
         }
     }
-
-    int _maximumMines = 5;
-
-    bool _pauseFlag = false;
-	int _pauseSelection = 0;
 
     public bool PauseEnabled {
         get {
@@ -69,11 +81,19 @@ public class GameState : MonoBehaviour {
     }
 
     void Start() {
+		if ( UIHolder == null ) {
+			UIHolder = FindObjectOfType<IngameUI>();
+		}
+		//Надо по-хорошему перестать юзать инвоки, инвоки зло, мало того что медленные, еще и читаемость кода убивают не хуже goto
+		Invoke("StartRace", 3f);
+		UIHolder.RaceCountdown.StartSequence();
+
         GetTrackNodes();
         CurrentNode = FirstTrackNode;
         var holder = FindObjectOfType<PlayerInfoHolder>();
         SpawnPlayers(holder.playersInfos);
 		SpawnMines ();
+		
         EventManager.Subscribe<Event_Paused>(this, OnPauseToggle);
         EventManager.Subscribe<Event_PlayerDead>(this, OnPlayerDead);
 		EventManager.Subscribe<Event_ChangeSelectedPauseMenuItem>(this, OnMenuItemChanged);
@@ -125,6 +145,12 @@ public class GameState : MonoBehaviour {
         return player;
     }
 
+	void StartRace() {
+		_raceStarted = true;
+		_startTime = Time.time;
+		EventManager.Fire(new Event_ControlsLockState_Change() { ControlsEnabled = true });
+	}
+
     void GetTrackNodes() {
         _trackNodes.Clear();
         var _curTrackNode = FirstTrackNode;
@@ -175,8 +201,6 @@ public class GameState : MonoBehaviour {
 
 		return FirstPlayer;
 	}
-
-    Player _leader = null;
 
     void Update() {
         _cachedLapCount = LapCount;
@@ -276,7 +300,4 @@ public class GameState : MonoBehaviour {
             return _lastLapNum;
         }
     }
-
-
-
 }

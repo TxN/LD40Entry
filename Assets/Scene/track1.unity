@@ -6604,6 +6604,7 @@ MonoBehaviour:
   Players: []
   FirstPlayer: {fileID: 0}
   CurrentNode: {fileID: 0}
+  UIHolder: {fileID: 2144351128}
 --- !u!4 &508456955
 Transform:
   m_ObjectHideFlags: 0
@@ -25551,7 +25552,13 @@ GameObject:
   m_PrefabInternal: {fileID: 2144351125}
 --- !u!114 &2144351127 stripped
 MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114658941895636116, guid: b54389e491a49d04eb70f9605c262ac1,
+  m_PrefabParentObject: {fileID: 114954284311348438, guid: b54389e491a49d04eb70f9605c262ac1,
     type: 2}
   m_PrefabInternal: {fileID: 2144351125}
   m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+--- !u!114 &2144351128 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114081424067926122, guid: b54389e491a49d04eb70f9605c262ac1,
+    type: 2}
+  m_PrefabInternal: {fileID: 2144351125}
+  m_Script: {fileID: 11500000, guid: 2f20a9ecf66c22040bd9e9ed200fcc0f, type: 3}

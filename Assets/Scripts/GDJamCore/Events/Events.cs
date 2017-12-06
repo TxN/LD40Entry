@@ -25,4 +25,8 @@
     public struct Event_LapPassed {
        public int lap;
     }
+
+	public struct Event_ControlsLockState_Change {
+		public bool ControlsEnabled;
+	}
 }
