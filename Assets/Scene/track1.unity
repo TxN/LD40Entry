@@ -4874,8 +4874,6 @@ MonoBehaviour:
     m_RotationOrder: 0
   player: {fileID: 508456955}
   initDelta: 10
-  MinFOV: 45
-  MaxFOV: 65
   CamCoeffs:
   - 1
   - 0.8
@@ -6602,8 +6600,8 @@ MonoBehaviour:
   - {fileID: 2113353094}
   - {fileID: 1436923137}
   Players: []
-  FirstPlayer: {fileID: 0}
   CurrentNode: {fileID: 0}
+  FirstPlayer: {fileID: 0}
   UIHolder: {fileID: 2144351128}
 --- !u!4 &508456955
 Transform:
@@ -8824,6 +8822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b062b433bb7e14fbdbb6f95589f485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TrackName: Track1
   FirstNode: {fileID: 1523659325}
 --- !u!1 &736208509
 GameObject:
