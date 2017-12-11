@@ -2,10 +2,10 @@
 
 public class PlayerInfo{
 	public Color color;
-	public string prefix;
+	public int playerNumber;
     public bool ready = false;
-	public PlayerInfo(Color col, string pref){
+	public PlayerInfo(Color col, int playerNumb){
 		color = col;
-		prefix = pref;
+		playerNumber = playerNumb;
 	}
 }

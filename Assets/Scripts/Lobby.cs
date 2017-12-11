@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using InputMng = TeamUtility.IO.InputManager;
 
 public class Lobby : MonoBehaviour {
 	public GameObject playersInfosGameObject;
@@ -13,6 +16,8 @@ public class Lobby : MonoBehaviour {
 
 	PlayerInfoHolder _holder = null;
 
+	public int playersConnected = 0;
+
 	void Start () {
 		PlayerInfoHolder oldHolder = FindObjectOfType<PlayerInfoHolder>();
 		if ( oldHolder != null ) {
@@ -22,10 +27,11 @@ public class Lobby : MonoBehaviour {
         playersInfosGameObject = new GameObject("[PlayerInputHolder]");
 		_holder = playersInfosGameObject.AddComponent <PlayerInfoHolder>();
 
+		InitInputConfigurations();
 	}
 
     bool _lockFlag = false;
-	
+		
 	void Update () {
         if (_lockFlag) {
             return;
@@ -35,9 +41,10 @@ public class Lobby : MonoBehaviour {
 		}
 
 		int i = 0;
-		while (i < joinKeys.Count) {
-			if (Input.GetButtonDown (InputManager.GetKey(joinKeys [i]))) {
-				PlayerInfo info = _holder.playersInfos.Find(infs => infs.prefix == joinKeysPrefixes[i]);
+		while (i < playersConnected) {
+			TeamUtility.IO.PlayerID playerId = (TeamUtility.IO.PlayerID)System.Enum.GetValues(typeof(TeamUtility.IO.PlayerID)).GetValue(i);
+			if (InputMng.GetButtonDown("Button A", playerId)) {
+				PlayerInfo info = _holder.playersInfos.Find(infs => infs.playerNumber == i);
 				if ( info != null ) {
 					_holder.RemovePlayerInfo(info);
 					GameObject hideGO = JoinObjects.Find(objs => objs.name == joinKeysPrefixes[i]);
@@ -45,8 +52,8 @@ public class Lobby : MonoBehaviour {
 						hideGO.SetActive(false);
 					}
 				} else {
-					Color col = Random.ColorHSV(0, 1, 1, 1, 1, 1);
-					_holder.AddPlayerInfo(new PlayerInfo(col, joinKeysPrefixes[i]));
+					Color col = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+					_holder.AddPlayerInfo(new PlayerInfo(col, i));
 					GameObject showGO = JoinObjects.Find(objs => objs.activeSelf == false);
 					if ( showGO ) {
 						showGO.SetActive(true);
@@ -59,12 +66,14 @@ public class Lobby : MonoBehaviour {
 			i++;
 		}
         foreach (var player in _holder.playersInfos) {
-			if (Input.GetButtonDown(InputManager.GetKey(player.prefix + READY_KEY))) {
-                player.ready = !player.ready;
-                GameObject readyGOParent = JoinObjects.Find(objs => objs.name == player.prefix);
-                readyGOParent.transform.Find("ReadyFlag").gameObject.SetActive(player.ready);
-                PlayMenuClick();
-            }
+			TeamUtility.IO.PlayerID playerId = (TeamUtility.IO.PlayerID)System.Enum.GetValues(typeof(TeamUtility.IO.PlayerID))
+				.GetValue(player.playerNumber);
+			if (InputMng.GetButtonDown("Start", playerId)) {
+               player.ready = !player.ready;
+               GameObject readyGOParent = JoinObjects.Find(objs => objs.name == joinKeysPrefixes[player.playerNumber]); 
+               readyGOParent.transform.Find("ReadyFlag").gameObject.SetActive(player.ready);
+               PlayMenuClick();
+           }
         }
 
         bool _allReady = true;
@@ -100,4 +109,27 @@ public class Lobby : MonoBehaviour {
     void PlayMenuClick() {
         AudioSrc.Play();
     }
+
+	void InitInputConfigurations() {
+		int playerNumber = InputMng.GetJoystickNames().Length;
+		if (playerNumber > 4) playerNumber = 4;
+		
+		string confNamePrefix = "Win";
+		if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
+			confNamePrefix = "OS_X";
+		}
+
+		for (int i = 0; i < playerNumber; i++) {
+			TeamUtility.IO.PlayerID playerId = (TeamUtility.IO.PlayerID)System.Enum.GetValues(typeof(TeamUtility.IO.PlayerID)).GetValue(i);
+			InputMng.SetInputConfiguration(confNamePrefix + "_gamepad_" + (i + 1), playerId);
+		}
+
+		if (playerNumber < 4) {
+			TeamUtility.IO.PlayerID playerId = (TeamUtility.IO.PlayerID)System.Enum.GetValues(typeof(TeamUtility.IO.PlayerID)).GetValue(playerNumber);
+			InputMng.SetInputConfiguration("keyboard", playerId);
+			playersConnected = playerNumber + 1;
+		} else {
+			playersConnected = 4;
+		}
+	}
 }

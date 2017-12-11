@@ -159,7 +159,7 @@ public class GameState : MonoBehaviour {
         for (int i = 0; i < players.Count; i++) {
             GameObject playerGo = Instantiate(PlayerPrefab, StartPoints[i].position, Quaternion.identity, null);
 			var controls = playerGo.AddComponent<InputManager>();
-			controls.Init(players[i].prefix);
+			controls.Init(players[i].playerNumber);
 			var player = playerGo.GetComponent<Player>();
             player.Init(i, controls, players[i].color);
 			Players.Add(player);

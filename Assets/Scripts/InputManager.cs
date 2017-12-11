@@ -1,43 +1,31 @@
 ﻿using EventSys;
 using UnityEngine;
 
+using InputMng = TeamUtility.IO.InputManager;
+
 public class InputManager : MonoBehaviour {
 	const float ANGLE_PRECISION = 0.1f;
 	const int PAUSE_MENU_FRAME_LOCK = 10;
+	private int _playerNumber;
 
-	private string _directionAxisX;
-	private string _directionAxisY;
-	private string _launchAxisX;
-	private string _launchAxisY;
-	private string _moveTrigger;
-	private string _backMoveTrigger;
-	private string _launchTrigger;
-	private string _joinTrigger;
-	private string _pauseTrigger;
-    private string _dashTrigger;
+	public TeamUtility.IO.PlayerID playerId {
+		get {
+			return (TeamUtility.IO.PlayerID)System.Enum.GetValues(typeof(TeamUtility.IO.PlayerID)).GetValue(_playerNumber);
+		}
+	}
 
 	private float _directionAngle = 0f;
-	private float _launchAngle = 0f;
 
 	private int _pauseMenuActionLockedFrameNumber = 0;
 
-	public void Init(string prefix) {
-		_directionAxisX = prefix + "_direction_x";
-		_directionAxisY = prefix + "_direction_y";
-		_launchAxisX = prefix + "_launch_x";
-		_launchAxisY = prefix + "_launch_y";
-		_moveTrigger = prefix + "_move";
-		_backMoveTrigger = prefix + "_move_bk";
-		_launchTrigger = prefix + "_launch";
-		_pauseTrigger = prefix + "_pause";
-        _dashTrigger = prefix + "_dash";
-		_joinTrigger = prefix + "_join";
+	public void Init(int playerNumber) {
+		_playerNumber = playerNumber;
 	}
 
 	public float GetDirection (){
 		Vector2 vec = new Vector2(
-			Input.GetAxis(InputManager.GetKey(_directionAxisX)),
-			Input.GetAxis(InputManager.GetKey(_directionAxisY))
+			InputMng.GetAxis("Left Stick Horizontal", playerId),
+			InputMng.GetAxis("Left Stick Vertical", playerId)
 		);
 
 		if (IsZeroAngle (vec)) {
@@ -50,26 +38,34 @@ public class InputManager : MonoBehaviour {
 
 	public Vector2 GetLaunchDirection(){
 		Vector2 vec = new Vector2(
-			Input.GetAxis(InputManager.GetKey(_launchAxisX)),
-			Input.GetAxis(InputManager.GetKey(_launchAxisY))
+			InputMng.GetAxis("Right Stick Horizontal", playerId),
+			InputMng.GetAxis("Right Stick Vertical", playerId)
 		);
         return vec.normalized;
 	}
 
 	public float GetMoveAcceleration (){
-		return Input.GetAxis(InputManager.GetKey(_moveTrigger));
+		if (InputMng.GetButton ("Right Trigger", playerId)) {
+			return 1f;
+		}
+
+		if (InputMng.GetButton ("Left Trigger", playerId)) {
+			return -1f;
+		}
+
+		return 0f;
 	}
 
 	public bool GetLaunchTrigger() {
-		return Input.GetButtonDown (InputManager.GetKey(_launchTrigger));
+		return InputMng.GetButtonDown("Left Stick Button", playerId);
 	}
 
     public bool GetDashTrigger() {
-		return Input.GetButtonDown(InputManager.GetKey(_dashTrigger));
+		return InputMng.GetButtonDown("Right Bumper", playerId);
     }
 
 	void Update() {
-		if (Input.GetButtonDown (InputManager.GetKey(_pauseTrigger))) {
+		if (InputMng.GetButtonDown ("Back", playerId)) {
 			EventManager.Fire (new Event_Paused());
 		}
 
@@ -83,33 +79,18 @@ public class InputManager : MonoBehaviour {
 				_pauseMenuActionLockedFrameNumber -= 1;
 			}
 				
-			if (Input.GetButtonDown(InputManager.GetKey(_joinTrigger))) {
+			if (InputMng.GetButtonDown("Button A", playerId)) {
 				EventManager.Fire (new Event_SelectPauseMenuItem ());
 			}
 		}
 	}
 
 	int GetPauseMenuDirection() {
-		int verticalAxisVal = (int)Input.GetAxis (InputManager.GetKey (_directionAxisY));
+		int verticalAxisVal = (int)InputMng.GetAxis("Left Stick Vertical", playerId);
 		return verticalAxisVal * -1;
 	}
 
 	protected bool IsZeroAngle(Vector2 vec) {
 		return vec.magnitude - ANGLE_PRECISION <= 0;
-	}
-
-	public static string GetKey(string key) {
-		if (key.StartsWith ("kb")) {
-			return key;
-		}
-
-		string postfix = "_";
-		if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
-			postfix += "osx";
-		} else {
-			postfix += "win";
-		}
-			
-		return key + postfix;
 	}
 }
