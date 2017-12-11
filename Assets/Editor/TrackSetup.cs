@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEditor;
 
 public class TrackSetup : MonoBehaviour {
+	static Vector3 LinesOffset = new Vector3(0, 0, 0.15f);
+	
 	[MenuItem("Tools/Setup Track")]
 	public static void SetupTrack() {
         var TrackHolder = FindObjectOfType<RacetrackHolder>();
@@ -14,8 +16,8 @@ public class TrackSetup : MonoBehaviour {
 			}
 			var ren = node.pole1.GetComponentInChildren<LineRenderer>();
 			Vector3[] points = new Vector3[2];
-			points[0] = node.pole1.transform.GetChild(0).position;
-			points[1] = node.next.pole1.transform.GetChild(0).position;
+			points[0] = node.pole1.transform.GetChild(0).position + LinesOffset;
+			points[1] = node.next.pole1.transform.GetChild(0).position + LinesOffset;
 			ren.positionCount = 2;
 			ren.SetPositions(points);
 
@@ -30,8 +32,8 @@ public class TrackSetup : MonoBehaviour {
             col = null;
 
 			ren = node.pole2.GetComponentInChildren<LineRenderer>();
-			points[0] = node.pole2.transform.GetChild(0).position;
-			points[1] = node.next.pole2.transform.GetChild(0).position;
+			points[0] = node.pole2.transform.GetChild(0).position + LinesOffset;
+			points[1] = node.next.pole2.transform.GetChild(0).position + LinesOffset;
 			ren.positionCount = 2;
 			ren.SetPositions(points);
 
@@ -43,8 +45,8 @@ public class TrackSetup : MonoBehaviour {
             col.points = new Vector2[] { pole2tr.localPosition, pole2tr.InverseTransformPoint(node.next.pole2.transform.GetChild(0).position) };
             col = null;
 		}
-	
-	/*	MeshFilter filter = TrackHolder.GetComponent<MeshFilter>();
+	/*
+		MeshFilter filter = TrackHolder.GetComponent<MeshFilter>();
 		if ( !filter ) {
 			filter = TrackHolder.gameObject.AddComponent<MeshFilter>();
 			if ( !TrackHolder.gameObject.GetComponent<MeshRenderer>()) {
@@ -53,7 +55,7 @@ public class TrackSetup : MonoBehaviour {
 		}
 
 		filter.sharedMesh = DoMesh(TrackHolder);
-		*/
+	*/	
 	}
 
 	static Mesh DoMesh(RacetrackHolder TrackHolder) {
@@ -66,14 +68,18 @@ public class TrackSetup : MonoBehaviour {
 		List<int> trackIndices = new List<int>(512);
 		int indiceIndex = 0;
 
+		float uv_per_unit = 0.5f;
+
 		TrackNode node = TrackHolder.FirstNode;
 		do {
+			float d1 = Vector3.Distance(node.pole1.transform.position, node.previous.pole1.transform.position) * uv_per_unit;
+			float d2 = Vector3.Distance(node.pole2.transform.position, node.previous.pole2.transform.position) * uv_per_unit;
 			trackVerts.Add(node.pole1.transform.position);
 			trackVerts.Add(node.previous.pole1.transform.position);
 			trackVerts.Add(node.pole2.transform.position);
-			trackUVs.Add(new Vector2(0, 1));		
+			trackUVs.Add(new Vector2(0, d1));		
 			trackUVs.Add(new Vector2(0, 0));
-			trackUVs.Add(new Vector2(1, 1));
+			trackUVs.Add(new Vector2(1, d2));
 			var normal = Vector3.Cross((trackVerts[indiceIndex + 1] - trackVerts[indiceIndex]), (trackVerts[indiceIndex + 2] - trackVerts[indiceIndex])).normalized;
 			trackNormals.Add(normal); 
 			trackNormals.Add(normal);
@@ -85,7 +91,7 @@ public class TrackSetup : MonoBehaviour {
 			
 
 			trackUVs.Add(new Vector2(1, 0));
-			trackUVs.Add(new Vector2(1, 1));
+			trackUVs.Add(new Vector2(1, d2));
 			trackUVs.Add(new Vector2(0, 0));
 			
 			normal = Vector3.Cross((trackVerts[indiceIndex + 4] - trackVerts[indiceIndex + 3]), (trackVerts[indiceIndex + 5] - trackVerts[indiceIndex + 3])).normalized;
