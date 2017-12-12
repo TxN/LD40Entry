@@ -2611,7 +2611,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 8
+      axis: 2
       joystick: 0
     - name: Right Trigger
       description: 
@@ -2625,7 +2625,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 9
+      axis: 2
       joystick: 0
     - name: DPAD Vertical
       description: 
@@ -2866,7 +2866,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 8
+      axis: 2
       joystick: 1
     - name: Right Trigger
       description: 
@@ -2880,7 +2880,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 9
+      axis: 2
       joystick: 1
     - name: DPAD Vertical
       description: 
@@ -3121,7 +3121,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 8
+      axis: 2
       joystick: 2
     - name: Right Trigger
       description: 
@@ -3135,7 +3135,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 9
+      axis: 2
       joystick: 2
     - name: DPAD Vertical
       description: 
@@ -3376,7 +3376,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 8
+      axis: 2
       joystick: 3
     - name: Right Trigger
       description: 
@@ -3390,7 +3390,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 9
+      axis: 2
       joystick: 3
     - name: DPAD Vertical
       description: 
