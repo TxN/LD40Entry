@@ -57,7 +57,7 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public bool GetLaunchTrigger() {
-		return InputMng.GetButtonDown("Left Stick Button", playerId);
+		return InputMng.GetButtonDown("Right Stick Button", playerId);
 	}
 
     public bool GetDashTrigger() {
