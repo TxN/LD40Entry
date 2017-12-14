@@ -45,11 +45,11 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public float GetMoveAcceleration (){
-		if (InputMng.GetButton ("Right Trigger", playerId)) {
+		if (InputMng.GetButton ("Right Trigger", playerId) || InputMng.GetAxis("Right Trigger", playerId) > 0.5f) {
 			return 1f;
 		}
 
-		if (InputMng.GetButton ("Left Trigger", playerId)) {
+		if (InputMng.GetButton ("Left Trigger", playerId)|| InputMng.GetAxis("Left Trigger", playerId) > 0.5f) {
 			return -1f;
 		}
 
