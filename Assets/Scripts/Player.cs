@@ -50,6 +50,12 @@ public class Player : MonoBehaviour {
 
 	bool _controlsEnabled = false;
 
+    //DYNAMIC DRAG
+	public bool dynamicDrag = true;
+    public float dynamicDragMaxValue = 5f;
+    public float dynamicDragSpeedMinValue = 0.5f;
+    public float dynamicDragAngleK = 0.0001f;
+
     public bool Alive {
         get {
             return _isAlive;
@@ -69,6 +75,7 @@ public class Player : MonoBehaviour {
     }
 
     bool _isAlive = true;
+
 
     public void Init(int index, InputManager controls, Color color) {
         _rb = GetComponent<Rigidbody2D>();
@@ -181,6 +188,11 @@ public class Player : MonoBehaviour {
         var tgAngle = Quaternion.Euler(0, 0, _rotationAngle);
 		_rb.MoveRotation(_rotationAngle);
 
+		if (dynamicDrag)
+		{
+			DynamicDragUpdate();
+		}
+
         if (_becameInvisibleFlag) {
             Kill();
             Debug.Log("Death " + _playerIndex);
@@ -216,5 +228,19 @@ public class Player : MonoBehaviour {
 				lastPassedWaypoint = trackNodeIndex;
 			}
 		}
+	}
+	void DynamicDragUpdate()
+	{ 
+		Vector2 sp = _rb.velocity;
+        if (sp.magnitude < dynamicDragSpeedMinValue) { return; }
+		float speed_angle = Mathf.Atan2(sp.y, -sp.x) * Mathf.Rad2Deg;
+        float rot_ang_val = _rotationAngle;
+        if (rot_ang_val >= -90 && rot_ang_val <= 90) { rot_ang_val = 90 - rot_ang_val; }
+        else if (rot_ang_val >= 90 && rot_ang_val <= 180) { rot_ang_val = 90 - rot_ang_val; }
+        else  { rot_ang_val = -270 - rot_ang_val; } 
+		float diff = Mathf.Abs(speed_angle - rot_ang_val);
+        if (diff > 180) diff = 360 - diff; 
+		//_rb.drag = Mathf.Clamp(_initDrag + (diff * 1) * sp.magnitude * 0.001f, _initDrag, dynamicDragMaxValue);
+		_rb.drag = Mathf.Clamp(_initDrag + (diff * diff * dynamicDragAngleK), _initDrag, dynamicDragMaxValue);
 	}
 }
