@@ -1310,7 +1310,7 @@ MonoBehaviour:
       type: 0
       axis: 0
       joystick: 0
-    isExpanded: 1
+    isExpanded: 0
   - name: OS_X_gamepad_1
     axes:
     - name: Button A
@@ -2531,7 +2531,7 @@ MonoBehaviour:
       joystick: 0
     - name: Back
       description: 
-      positive: 358
+      positive: 356
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2545,7 +2545,7 @@ MonoBehaviour:
       joystick: 0
     - name: Start
       description: 
-      positive: 359
+      positive: 357
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2559,7 +2559,7 @@ MonoBehaviour:
       joystick: 0
     - name: Left Stick Button
       description: 
-      positive: 360
+      positive: 358
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2573,7 +2573,7 @@ MonoBehaviour:
       joystick: 0
     - name: Right Stick Button
       description: 
-      positive: 361
+      positive: 359
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2595,7 +2595,7 @@ MonoBehaviour:
       gravity: 1
       sensitivity: 1
       snap: 0
-      invert: 0
+      invert: 1
       type: 3
       axis: 1
       joystick: 0
@@ -2625,7 +2625,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 2
+      axis: 4
       joystick: 0
     - name: Right Stick Horizontal
       description: 
@@ -2643,7 +2643,7 @@ MonoBehaviour:
       joystick: 0
     - name: Left Trigger
       description: 
-      positive: 356
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2652,12 +2652,26 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 2
       joystick: 0
     - name: Right Trigger
       description: 
-      positive: 357
+      positive: 0
+      negative: 0
+      altPositive: 0
+      altNegative: 0
+      deadZone: 0
+      gravity: 1
+      sensitivity: 1
+      snap: 0
+      invert: 1
+      type: 3
+      axis: 2
+      joystick: 0
+    - name: DPAD Vertical
+      description: 
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2666,27 +2680,13 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
-      axis: 2
-      joystick: 0
-    - name: DPAD Vertical
-      description: 
-      positive: 362
-      negative: 363
-      altPositive: 0
-      altNegative: 0
-      deadZone: 0
-      gravity: 1
-      sensitivity: 1
-      snap: 0
-      invert: 0
-      type: 0
+      type: 3
       axis: 6
       joystick: 0
     - name: DPAD Horizontal
       description: 
-      positive: 364
-      negative: 365
+      positive: 0
+      negative: 0
       altPositive: 0
       altNegative: 0
       deadZone: 0
@@ -2694,7 +2694,7 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 5
       joystick: 0
     isExpanded: 0
@@ -2786,7 +2786,7 @@ MonoBehaviour:
       joystick: 1
     - name: Back
       description: 
-      positive: 378
+      positive: 376
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2800,7 +2800,7 @@ MonoBehaviour:
       joystick: 1
     - name: Start
       description: 
-      positive: 379
+      positive: 377
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2814,7 +2814,7 @@ MonoBehaviour:
       joystick: 1
     - name: Left Stick Button
       description: 
-      positive: 380
+      positive: 378
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2828,7 +2828,7 @@ MonoBehaviour:
       joystick: 1
     - name: Right Stick Button
       description: 
-      positive: 381
+      positive: 379
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2850,7 +2850,7 @@ MonoBehaviour:
       gravity: 1
       sensitivity: 1
       snap: 0
-      invert: 0
+      invert: 1
       type: 3
       axis: 1
       joystick: 1
@@ -2880,7 +2880,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 2
+      axis: 4
       joystick: 1
     - name: Right Stick Horizontal
       description: 
@@ -2898,7 +2898,7 @@ MonoBehaviour:
       joystick: 1
     - name: Left Trigger
       description: 
-      positive: 376
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2907,12 +2907,26 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 2
       joystick: 1
     - name: Right Trigger
       description: 
-      positive: 377
+      positive: 0
+      negative: 0
+      altPositive: 0
+      altNegative: 0
+      deadZone: 0
+      gravity: 1
+      sensitivity: 1
+      snap: 0
+      invert: 1
+      type: 3
+      axis: 2
+      joystick: 1
+    - name: DPAD Vertical
+      description: 
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2921,27 +2935,13 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
-      axis: 2
-      joystick: 1
-    - name: DPAD Vertical
-      description: 
-      positive: 382
-      negative: 383
-      altPositive: 0
-      altNegative: 0
-      deadZone: 0
-      gravity: 1
-      sensitivity: 1
-      snap: 0
-      invert: 0
-      type: 0
+      type: 3
       axis: 6
       joystick: 1
     - name: DPAD Horizontal
       description: 
-      positive: 384
-      negative: 385
+      positive: 0
+      negative: 0
       altPositive: 0
       altNegative: 0
       deadZone: 0
@@ -2949,7 +2949,7 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 5
       joystick: 1
     isExpanded: 0
@@ -3041,7 +3041,7 @@ MonoBehaviour:
       joystick: 2
     - name: Back
       description: 
-      positive: 398
+      positive: 396
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3055,7 +3055,7 @@ MonoBehaviour:
       joystick: 2
     - name: Start
       description: 
-      positive: 399
+      positive: 397
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3083,7 +3083,7 @@ MonoBehaviour:
       joystick: 2
     - name: Right Stick Button
       description: 
-      positive: 401
+      positive: 399
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3105,7 +3105,7 @@ MonoBehaviour:
       gravity: 1
       sensitivity: 1
       snap: 0
-      invert: 0
+      invert: 1
       type: 3
       axis: 1
       joystick: 2
@@ -3135,7 +3135,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 2
+      axis: 4
       joystick: 2
     - name: Right Stick Horizontal
       description: 
@@ -3153,7 +3153,7 @@ MonoBehaviour:
       joystick: 2
     - name: Left Trigger
       description: 
-      positive: 396
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3162,12 +3162,26 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 2
       joystick: 2
     - name: Right Trigger
       description: 
-      positive: 397
+      positive: 0
+      negative: 0
+      altPositive: 0
+      altNegative: 0
+      deadZone: 0
+      gravity: 1
+      sensitivity: 1
+      snap: 0
+      invert: 1
+      type: 3
+      axis: 2
+      joystick: 2
+    - name: DPAD Vertical
+      description: 
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3176,27 +3190,13 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
-      axis: 2
-      joystick: 2
-    - name: DPAD Vertical
-      description: 
-      positive: 402
-      negative: 403
-      altPositive: 0
-      altNegative: 0
-      deadZone: 0
-      gravity: 1
-      sensitivity: 1
-      snap: 0
-      invert: 0
-      type: 0
+      type: 3
       axis: 6
       joystick: 2
     - name: DPAD Horizontal
       description: 
-      positive: 404
-      negative: 405
+      positive: 0
+      negative: 0
       altPositive: 0
       altNegative: 0
       deadZone: 0
@@ -3204,10 +3204,10 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 5
       joystick: 2
-    isExpanded: 0
+    isExpanded: 1
   - name: Win_gamepad_4
     axes:
     - name: Button A
@@ -3296,7 +3296,7 @@ MonoBehaviour:
       joystick: 3
     - name: Back
       description: 
-      positive: 418
+      positive: 416
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3310,7 +3310,7 @@ MonoBehaviour:
       joystick: 3
     - name: Start
       description: 
-      positive: 419
+      positive: 417
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3338,7 +3338,7 @@ MonoBehaviour:
       joystick: 3
     - name: Right Stick Button
       description: 
-      positive: 421
+      positive: 419
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3360,7 +3360,7 @@ MonoBehaviour:
       gravity: 1
       sensitivity: 1
       snap: 0
-      invert: 0
+      invert: 1
       type: 3
       axis: 1
       joystick: 3
@@ -3390,7 +3390,7 @@ MonoBehaviour:
       snap: 0
       invert: 0
       type: 3
-      axis: 2
+      axis: 4
       joystick: 3
     - name: Right Stick Horizontal
       description: 
@@ -3408,7 +3408,7 @@ MonoBehaviour:
       joystick: 3
     - name: Left Trigger
       description: 
-      positive: 416
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3417,12 +3417,26 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 2
       joystick: 3
     - name: Right Trigger
       description: 
-      positive: 417
+      positive: 0
+      negative: 0
+      altPositive: 0
+      altNegative: 0
+      deadZone: 0
+      gravity: 1
+      sensitivity: 1
+      snap: 0
+      invert: 1
+      type: 3
+      axis: 2
+      joystick: 3
+    - name: DPAD Vertical
+      description: 
+      positive: 0
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -3431,27 +3445,13 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
-      axis: 2
-      joystick: 3
-    - name: DPAD Vertical
-      description: 
-      positive: 422
-      negative: 423
-      altPositive: 0
-      altNegative: 0
-      deadZone: 0
-      gravity: 1
-      sensitivity: 1
-      snap: 0
-      invert: 0
-      type: 0
+      type: 3
       axis: 6
       joystick: 3
     - name: DPAD Horizontal
       description: 
-      positive: 424
-      negative: 425
+      positive: 0
+      negative: 0
       altPositive: 0
       altNegative: 0
       deadZone: 0
@@ -3459,10 +3459,10 @@ MonoBehaviour:
       sensitivity: 1
       snap: 0
       invert: 0
-      type: 0
+      type: 3
       axis: 5
       joystick: 3
-    isExpanded: 0
+    isExpanded: 1
   _playerOneDefault: KeyboardAndMouse
   _playerTwoDefault: KeyboardAndMouse
   _playerThreeDefault: KeyboardAndMouse
