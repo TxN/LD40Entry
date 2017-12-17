@@ -117,7 +117,7 @@ public class GameState : MonoBehaviour {
         CurrentNode = FirstTrackNode;
         var holder = FindObjectOfType<PlayerInfoHolder>();
         SpawnPlayers(holder.playersInfos);
-		SpawnMines ();
+		SpawnMines (_trackNodes, Players.Count, 40);
 		
         EventManager.Subscribe<Event_Paused>(this, OnPauseToggle);
         EventManager.Subscribe<Event_PlayerDead>(this, OnPlayerDead);
@@ -166,12 +166,21 @@ public class GameState : MonoBehaviour {
         }
     }
 
-	void SpawnMines() {
-		int trackNodesTotal = FindObjectsOfType<TrackNode> ().Length;
-		int minesTotal = Players.Count * MaxMinesBeforeExplosion + Players.Count*3;
-		//TODO: what will be if minesTotal > trackNodesTotal
+	public void SpawnMines(List<TrackNode> orderedTrackNodes, int playersCount, int additionalMines, bool isCalledFromEditor = false) {
+		Mine[] existingMines = FindObjectsOfType<Mine>();
+		if (existingMines.Length > 0) {
+			if (!isCalledFromEditor) {
+				foreach(Mine mine in existingMines) {
+					mine.Spawn(new Vector2(0, 0), new Vector2(0, 0));
+				}
+			}
+			Debug.Log("Skip Spawning mines");
+			return;
+		}
 
-		int maxTrackNodesBetweenMines = trackNodesTotal / minesTotal;
+		int minesTotal = playersCount * MaxMinesBeforeExplosion + playersCount*3 + additionalMines;
+
+		int maxTrackNodesBetweenMines = orderedTrackNodes.Count / minesTotal;
 		int minTrackNodesBetweenMines = maxTrackNodesBetweenMines / 2;
 
 		int lastTrackNodeIndexWithMine = 1; // fist spawned mine
@@ -183,13 +192,33 @@ public class GameState : MonoBehaviour {
 			} while (minePositionOffset == 0);
 
 			int position = lastTrackNodeIndexWithMine + minePositionOffset;
-			TrackNode trackNode = _trackNodes [position - 1];
+			TrackNode trackNode = orderedTrackNodes [position - 1];
 			lastTrackNodeIndexWithMine = position;
 
-			GameObject mineGo = Instantiate(MinePrefab, trackNode.transform.position, Quaternion.identity, null);
-			Mine mine = mineGo.GetComponent<Mine> ();
-            mine.Spawn(new Vector2(0, 0), new Vector2(0, 0));
+			Vector3 minePosition;
+			try {
+				TrackNode nextTrackNode = orderedTrackNodes[position % orderedTrackNodes.Count];
+				minePosition = GetRandomPositionBetweenPoints(new Vector2[]{
+					new Vector2(trackNode.pole1.transform.position.x, trackNode.pole1.transform.position.y),
+					new Vector2(trackNode.pole2.transform.position.x, trackNode.pole2.transform.position.y),
+					new Vector2(nextTrackNode.pole1.transform.position.x, nextTrackNode.pole1.transform.position.y),
+					new Vector2(nextTrackNode.pole2.transform.position.x, nextTrackNode.pole2.transform.position.y)
+				});
+				minePosition.z = trackNode.transform.position.z;
+			} catch (System.Exception e) {
+				minePosition = trackNode.transform.position;
+			}			
+
+			GameObject mineGo = Instantiate(MinePrefab, minePosition, Quaternion.identity, null);
+			mineGo.name = "Mine" + (i + 1);
+
+			if (!isCalledFromEditor) {
+				Mine mine = mineGo.GetComponent<Mine> ();
+            	mine.Spawn(new Vector2(0, 0), new Vector2(0, 0));
+			}
 		}
+		
+		Debug.Log("Mines were created successfully.");
 	}
 
     Player CreatePlayer(int index, InputManager controls, Color color) {
@@ -269,6 +298,25 @@ public class GameState : MonoBehaviour {
 			PauseMenu.transform.Find(items[i]).Find("Text").GetComponent<Text>().color = Color.white;
 		}
 	}
+
+	Vector3 GetRandomPositionBetweenPoints (Vector2[] vertices2D) {
+        Triangulator tr = new Triangulator(vertices2D);
+        int[] indices = tr.Triangulate();
+
+		List<Vector2> tVert = new List<Vector2>();
+		for (int i = 0; i<indices.Length; i++) {
+			tVert.Add(vertices2D[ indices[i] ]);
+		}
+
+		// https://math.stackexchange.com/questions/18686/uniform-random-point-in-triangle
+		float rand1 = Random.Range(0f, 1f);
+		float rand2 = Random.Range(0f, 1f);
+		return new Vector3(
+			((1 - Mathf.Sqrt(rand1)) * tVert[0].x + (Mathf.Sqrt(rand1) * (1 - rand2)) * tVert[1].x + (Mathf.Sqrt(rand1) * rand2) * tVert[2].x),
+			((1 - Mathf.Sqrt(rand1)) * tVert[0].y + (Mathf.Sqrt(rand1) * (1 - rand2)) * tVert[1].y + (Mathf.Sqrt(rand1) * rand2) * tVert[2].y),
+			0
+		);
+    }
 
 	//-------------------------------
 	//---------Event handlers--------
