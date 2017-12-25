@@ -29,7 +29,7 @@ public class GameState : MonoBehaviour {
 	float _startTime = 0f;
 	List<TrackNode> _trackNodes = new List<TrackNode>();
 	Player _leader = null;
-	int _maximumMines = 5;
+	int _maximumMines = 2;
 
 	int _pauseSelection = 0;
 
@@ -211,9 +211,11 @@ public class GameState : MonoBehaviour {
 
 			GameObject mineGo = Instantiate(MinePrefab, minePosition, Quaternion.identity, null);
 			mineGo.name = "Mine" + (i + 1);
+			System.Type typeOfMine = Mine.GetTypeOfMineByIntCode((int)Random.Range(0, 3));
+			mineGo.AddComponent(typeOfMine);
 
 			if (!isCalledFromEditor) {
-				Mine mine = mineGo.GetComponent<Mine> ();
+				Mine mine = mineGo.GetComponent(typeOfMine) as Mine;
             	mine.Spawn(new Vector2(0, 0), new Vector2(0, 0));
 			}
 		}
