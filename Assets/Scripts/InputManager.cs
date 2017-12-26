@@ -23,17 +23,20 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public float GetDirection (){
-		Vector2 vec = new Vector2(
-			InputMng.GetAxis("Left Stick Horizontal", playerId),
-			InputMng.GetAxis("Left Stick Vertical", playerId)
-		);
-
+		Vector2 vec = GetDirectionVector();
 		if (IsZeroAngle (vec)) {
 			return _directionAngle;
 		}
 		
 		_directionAngle = Mathf.Atan2 (vec.x, vec.y) * Mathf.Rad2Deg;
 		return _directionAngle;
+	}
+
+	public Vector2 GetDirectionVector () {
+		return new Vector2(
+			InputMng.GetAxis("Left Stick Horizontal", playerId),
+			InputMng.GetAxis("Left Stick Vertical", playerId)
+		);
 	}
 
 	public Vector2 GetLaunchDirection(){
@@ -56,8 +59,17 @@ public class InputManager : MonoBehaviour {
 		return 0f;
 	}
 
-	public bool GetLaunchTrigger() {
-		return InputMng.GetButtonDown("Right Stick Button", playerId);
+	public bool GetLaunchTrigger(int typeOfLaunchedMine) {
+		switch (typeOfLaunchedMine) {
+			case (int)Mine.MineTypes.Simple:
+				return InputMng.GetButtonDown("Button A", playerId);
+			case (int)Mine.MineTypes.Dash:
+				return InputMng.GetButtonDown("Button B", playerId);
+			case (int)Mine.MineTypes.Speed:
+				return InputMng.GetButtonDown("Button X", playerId);
+			default:
+				throw new System.Exception("Unknown type of launched mine: " + typeOfLaunchedMine);
+		}
 	}
 
     public bool GetDashTrigger() {

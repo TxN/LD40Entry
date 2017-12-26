@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using EventSys;
+using System;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
     const float ROT_SMOOTH_COEF = 0.8f;
@@ -32,7 +34,7 @@ public class Player : MonoBehaviour {
     }
     int   _playerIndex = 0;
 
-    int _collectedMines = 0;
+    CollectedMines _collectedMines = new CollectedMines();
 
 	float _lastMineLaunchTime = 0f;
 	float _lastDashUseTime = 0f;
@@ -55,6 +57,57 @@ public class Player : MonoBehaviour {
     public float dynamicDragMaxValue = 5f;
     public float dynamicDragSpeedMinValue = 0.5f;
     public float dynamicDragAngleK = 0.0001f;
+
+    class CollectedMines {
+        List<int> _mines = new List<int>();
+
+        public void Add(int mineType) {
+            _mines.Add(mineType);
+        }
+
+        public void Remove(int mineType) {
+            _mines.RemoveAt( _mines.FindIndex( x => x == mineType ) );
+        }
+
+        public int Count() {
+            return _mines.Count;
+        }
+
+        public bool Exists(int mineType) {
+            return _mines.Exists(x => x == mineType);
+        }
+
+        /* Return number of mines that increase speed */
+        public int GetSpeedIncreaseRate() {
+			List<int> speedMines = _mines.FindAll(x => x == (int)Mine.MineTypes.Speed);
+            if (speedMines.Count == 0 || speedMines.Count == _mines.Count) {
+                return speedMines.Count;
+            }
+
+            return 0;
+        }
+
+        /* Returns number of mines that decrease speed */
+        public int GetSpeedDecreaseRate() {
+			if (_mines.FindAll(x => x == (int)Mine.MineTypes.Simple).Count > 0 || // if simple mines exist
+                (GetSpeedIncreaseRate() > 0 && GetDashIncreaseRate() > 0) // or if different mine-types mixed
+            ) {
+                return _mines.Count;
+            }
+
+            return 0;
+        }
+
+        /* Returns number of mines that increase dash */
+        public int GetDashIncreaseRate() {
+			List<int> dashMines = _mines.FindAll(x => x == (int)Mine.MineTypes.Dash);
+            if (dashMines.Count == 0 || dashMines.Count == _mines.Count) {
+                return dashMines.Count;
+            }
+
+            return 0;
+        }
+    }
 
     public bool Alive {
         get {
@@ -108,7 +161,7 @@ public class Player : MonoBehaviour {
 
     void OnMineCollect(Event_PlayerMineCollect e) {
         if (e.playerIndex == _playerIndex) {
-            _collectedMines++;
+            _collectedMines.Add(e.mineType);
         }
         PickupSource.Play();
 		UpdateInternals();
@@ -129,28 +182,40 @@ public class Player : MonoBehaviour {
         }
         _rotationAngle = _input.GetDirection();
         _moveForce = _input.GetMoveAcceleration();
+        int speedIncreaseRate = _collectedMines.GetSpeedIncreaseRate();
+        if (_moveForce > 0) {
+            _moveForce += speedIncreaseRate * 0.25f;
+        }
 
-        if (_input.GetLaunchTrigger() && _collectedMines > 0 ) {
-            LaunchMine(-_input.GetLaunchDirection());
+		foreach (int mineType in Enum.GetValues(typeof(Mine.MineTypes))) {
+            if (_input.GetLaunchTrigger(mineType) && _collectedMines.Exists(mineType) ) {
+                Vector2 dirVect = _input.GetDirectionVector();
+                LaunchMine(new Vector2(-dirVect.x, dirVect.y), mineType);
+            }
         }
 
 		if (_input.GetDashTrigger() && Time.time - _lastDashUseTime >= DASH_COOLDOWN) {
-			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * 2f, ForceMode2D.Impulse);
+            int dashIncreaseRate = _collectedMines.GetDashIncreaseRate();
+			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * (2f + 0.25f * dashIncreaseRate), ForceMode2D.Impulse);
 			_lastDashUseTime = Time.time;
         }
     }
 
 	void UpdateInternals() {
 		int maxMines = GameState.Instance.MaxMinesBeforeExplosion;
-		float scale = 0.1f + 0.9f *( (float)_collectedMines / (float) maxMines );
+		float scale = 0.1f + 0.9f *( (float)_collectedMines.Count() / (float) maxMines );
 		InternalsModel.transform.localScale = new Vector3(scale, scale, scale);
         CalcShipMass();
-		if ( _collectedMines > maxMines ) {
+		if ( _collectedMines.Count() > maxMines ) {
 			Kill();
 		} 
 	}
 
-    void LaunchMine(Vector2 direction) {
+    void LaunchMine(Vector2 direction, int mineType) {
+        if (!_collectedMines.Exists(mineType)) {
+            return;
+        }
+
 		if ( Time.time - _lastMineLaunchTime < MINE_LAUNCH_COOLDOWN ) {
 			return;
 		}
@@ -169,17 +234,22 @@ public class Player : MonoBehaviour {
 		_lastMineLaunchTime = Time.time;
 
         GameObject mineObj = Instantiate(MinePrefab, transform.position + (Vector3)direction*0.75f,Quaternion.identity);
-        Mine mine = mineObj.GetComponent<Mine>();
+        System.Type typeOfMine = Mine.GetTypeOfMineByIntCode(mineType);
+        mineObj.AddComponent(typeOfMine);
+
+        Mine mine = mineObj.GetComponent(typeOfMine) as Mine;
         mine.Spawn(direction,_rb.velocity);
 
-		_collectedMines--;
+		_collectedMines.Remove(mineType);
 		UpdateInternals();
         GetComponent<AudioSource>().Play();
     }
 
     void CalcShipMass() {
-        _rb.mass = _initMass + _initMass * ((float)_collectedMines/GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
-        _rb.drag = _initDrag + _initDrag * ((float)_collectedMines / GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
+        // TODO: Should we decrease speed too ?!
+        int numberOfMinesThatDecreaseSpeed = _collectedMines.GetSpeedDecreaseRate();
+        _rb.mass = _initMass + _initMass * ((float)numberOfMinesThatDecreaseSpeed / GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
+        _rb.drag = _initDrag + _initDrag * ((float)numberOfMinesThatDecreaseSpeed / GameState.Instance.MaxMinesBeforeExplosion * MINE_DECC_PERCENT);
     }
 
 

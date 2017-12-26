@@ -3,9 +3,13 @@ using EventSys;
 
 public class Mine : MonoBehaviour {
 
+	public enum MineTypes{ Simple = 0, Speed = 1, Dash = 2 }
     const float LAUNCH_FORCE = 2f;
 
     public GameObject ExplosionFab = null;
+
+	public int mineType = (int)MineTypes.Simple;
+	protected Color mineTypeColor = Color.grey;
 
     Rigidbody2D _rb = null;
     Collider2D _col = null;
@@ -25,7 +29,22 @@ public class Mine : MonoBehaviour {
 		_forceFlag = true;
 		_lastSpeedVector = speedVector * 0.5f;
 		Invoke("DisableForce", 0.15f);
+
+		ColorSetter.UpdateModelColor(gameObject, mineTypeColor);
     }
+
+	public static System.Type GetTypeOfMineByIntCode(int type) {
+		switch (type) {
+			case (int)MineTypes.Simple:
+				return typeof(MineSimple);
+			case (int)MineTypes.Speed:
+				return typeof(MineSpeed);
+			case (int)MineTypes.Dash:
+				return typeof(MineDash);
+			default:
+				return typeof(MineSimple);
+		}
+	}
 
 	void Update() { 
 		if (_forceFlag) {
@@ -46,7 +65,7 @@ public class Mine : MonoBehaviour {
 			player = coll.otherCollider.gameObject.GetComponent<Player>();
 		}
 		if (player && player.CanAcceptMine) {
-			EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index });
+			EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index, mineType = mineType });
 			Collect();
 		}
 	}
@@ -66,7 +85,8 @@ public class Mine : MonoBehaviour {
 	}
 
 	void Explode() {
-        Instantiate(ExplosionFab, transform.position, Quaternion.identity);
+		// TODO - return commented line ?
+        // Instantiate(ExplosionFab, transform.position, Quaternion.identity);
 		Destroy(gameObject);
     }
 

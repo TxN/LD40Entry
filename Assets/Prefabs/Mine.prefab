@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4361025760820794}
   - component: {fileID: 50212798173598634}
   - component: {fileID: 58040730562019976}
-  - component: {fileID: 114092301099533716}
   - component: {fileID: 82179177835470816}
   m_Layer: 0
   m_Name: Mine
@@ -248,19 +247,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114092301099533716
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1465748784053424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d55253d7dc026f042ab5986b8ddba9cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ExplosionFab: {fileID: 1601083689410176, guid: 166b582acd4d8334a8166f5c615cca7e,
-    type: 2}
 --- !u!114 &114151941167713052
 MonoBehaviour:
   m_ObjectHideFlags: 1

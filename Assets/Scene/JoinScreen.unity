@@ -1194,7 +1194,7 @@ MonoBehaviour:
       gravity: 1
       sensitivity: 1
       snap: 0
-      invert: 0
+      invert: 1
       type: 2
       axis: 1
       joystick: 0
@@ -1242,7 +1242,49 @@ MonoBehaviour:
       joystick: 0
     - name: Button A
       description: 
-      positive: 97
+      positive: 274
+      negative: 0
+      altPositive: 0
+      altNegative: 0
+      deadZone: 0
+      gravity: 0
+      sensitivity: 0
+      snap: 0
+      invert: 0
+      type: 0
+      axis: 0
+      joystick: 0
+    - name: Button B
+      description: 
+      positive: 275
+      negative: 0
+      altPositive: 0
+      altNegative: 0
+      deadZone: 0
+      gravity: 0
+      sensitivity: 0
+      snap: 0
+      invert: 0
+      type: 0
+      axis: 0
+      joystick: 0
+    - name: Button X
+      description: 
+      positive: 276
+      negative: 0
+      altPositive: 0
+      altNegative: 0
+      deadZone: 0
+      gravity: 0
+      sensitivity: 0
+      snap: 0
+      invert: 0
+      type: 0
+      axis: 0
+      joystick: 0
+    - name: Button Y
+      description: 
+      positive: 273
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -1310,7 +1352,7 @@ MonoBehaviour:
       type: 0
       axis: 0
       joystick: 0
-    isExpanded: 0
+    isExpanded: 1
   - name: OS_X_gamepad_1
     axes:
     - name: Button A
@@ -1343,7 +1385,7 @@ MonoBehaviour:
       joystick: 0
     - name: Button X
       description: 
-      positive: 353
+      positive: 350
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -1357,7 +1399,7 @@ MonoBehaviour:
       joystick: 0
     - name: Button Y
       description: 
-      positive: 350
+      positive: 353
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -1626,7 +1668,7 @@ MonoBehaviour:
       joystick: 1
     - name: Button X
       description: 
-      positive: 373
+      positive: 370
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -1640,7 +1682,7 @@ MonoBehaviour:
       joystick: 1
     - name: Button Y
       description: 
-      positive: 370
+      positive: 373
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -1909,7 +1951,7 @@ MonoBehaviour:
       joystick: 2
     - name: Button X
       description: 
-      positive: 393
+      positive: 390
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -1923,7 +1965,7 @@ MonoBehaviour:
       joystick: 2
     - name: Button Y
       description: 
-      positive: 390
+      positive: 393
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2192,7 +2234,7 @@ MonoBehaviour:
       joystick: 3
     - name: Button X
       description: 
-      positive: 413
+      positive: 410
       negative: 0
       altPositive: 0
       altNegative: 0
@@ -2206,7 +2248,7 @@ MonoBehaviour:
       joystick: 3
     - name: Button Y
       description: 
-      positive: 410
+      positive: 413
       negative: 0
       altPositive: 0
       altNegative: 0

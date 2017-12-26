@@ -6,6 +6,7 @@
 
     public struct Event_PlayerMineCollect {
         public int playerIndex;
+        public int mineType;
     }
 
     public struct Event_MaximumMinesCount_Change {
