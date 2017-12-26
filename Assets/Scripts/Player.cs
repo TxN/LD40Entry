@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using EventSys;
+using System;
 using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
@@ -78,7 +79,7 @@ public class Player : MonoBehaviour {
 
         /* Return number of mines that increase speed */
         public int GetSpeedIncreaseRate() {
-            List<int> speedMines = _mines.FindAll(x => x == Mine.MINE_TYPE_SPEED);
+			List<int> speedMines = _mines.FindAll(x => x == (int)Mine.MineTypes.Speed);
             if (speedMines.Count == 0 || speedMines.Count == _mines.Count) {
                 return speedMines.Count;
             }
@@ -88,7 +89,7 @@ public class Player : MonoBehaviour {
 
         /* Returns number of mines that decrease speed */
         public int GetSpeedDecreaseRate() {
-            if (_mines.FindAll(x => x == Mine.MINE_TYPE_SIMPLE).Count > 0 || // if simple mines exist
+			if (_mines.FindAll(x => x == (int)Mine.MineTypes.Simple).Count > 0 || // if simple mines exist
                 (GetSpeedIncreaseRate() > 0 && GetDashIncreaseRate() > 0) // or if different mine-types mixed
             ) {
                 return _mines.Count;
@@ -99,7 +100,7 @@ public class Player : MonoBehaviour {
 
         /* Returns number of mines that increase dash */
         public int GetDashIncreaseRate() {
-            List<int> dashMines = _mines.FindAll(x => x == Mine.MINE_TYPE_DASH);
+			List<int> dashMines = _mines.FindAll(x => x == (int)Mine.MineTypes.Dash);
             if (dashMines.Count == 0 || dashMines.Count == _mines.Count) {
                 return dashMines.Count;
             }
@@ -186,8 +187,7 @@ public class Player : MonoBehaviour {
             _moveForce += speedIncreaseRate * 0.25f;
         }
 
-        List<int> mineTypes = new List<int>() { Mine.MINE_TYPE_DASH, Mine.MINE_TYPE_SIMPLE, Mine.MINE_TYPE_SPEED };
-        foreach (int mineType in mineTypes) {
+		foreach (int mineType in Enum.GetValues(typeof(Mine.MineTypes))) {
             if (_input.GetLaunchTrigger(mineType) && _collectedMines.Exists(mineType) ) {
                 Vector2 dirVect = _input.GetDirectionVector();
                 LaunchMine(new Vector2(-dirVect.x, dirVect.y), mineType);

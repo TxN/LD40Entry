@@ -3,15 +3,12 @@ using EventSys;
 
 public class Mine : MonoBehaviour {
 
-	public const int MINE_TYPE_SIMPLE = 0;
-	public const int MINE_TYPE_SPEED = 1;
-	public const int MINE_TYPE_DASH = 2;
-
+	public enum MineTypes{ Simple = 0, Speed = 1, Dash = 2 }
     const float LAUNCH_FORCE = 2f;
 
     public GameObject ExplosionFab = null;
 
-	public int mineType = MINE_TYPE_SIMPLE;
+	public int mineType = (int)MineTypes.Simple;
 	protected Color mineTypeColor = Color.grey;
 
     Rigidbody2D _rb = null;
@@ -38,11 +35,11 @@ public class Mine : MonoBehaviour {
 
 	public static System.Type GetTypeOfMineByIntCode(int type) {
 		switch (type) {
-			case MINE_TYPE_SIMPLE:
+			case (int)MineTypes.Simple:
 				return typeof(MineSimple);
-			case MINE_TYPE_SPEED:
+			case (int)MineTypes.Speed:
 				return typeof(MineSpeed);
-			case MINE_TYPE_DASH:
+			case (int)MineTypes.Dash:
 				return typeof(MineDash);
 			default:
 				return typeof(MineSimple);

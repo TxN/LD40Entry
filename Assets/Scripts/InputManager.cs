@@ -61,11 +61,11 @@ public class InputManager : MonoBehaviour {
 
 	public bool GetLaunchTrigger(int typeOfLaunchedMine) {
 		switch (typeOfLaunchedMine) {
-			case Mine.MINE_TYPE_SIMPLE:
+			case (int)Mine.MineTypes.Simple:
 				return InputMng.GetButtonDown("Button A", playerId);
-			case Mine.MINE_TYPE_DASH:
+			case (int)Mine.MineTypes.Dash:
 				return InputMng.GetButtonDown("Button B", playerId);
-			case Mine.MINE_TYPE_SPEED:
+			case (int)Mine.MineTypes.Speed:
 				return InputMng.GetButtonDown("Button X", playerId);
 			default:
 				throw new System.Exception("Unknown type of launched mine: " + typeOfLaunchedMine);
