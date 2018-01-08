@@ -19,7 +19,13 @@ public class Mine : MonoBehaviour {
 	Vector2 _lastSpeedVector;
 
     public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
-        _rb = gameObject.GetComponent<Rigidbody2D>();
+		if (speedVector == Vector2.zero && initSpeed == Vector2.zero) {
+			ChangeLayerToRestState();
+		} else {
+			ChangeLayerToMotionState();
+		}
+
+		_rb = gameObject.GetComponent<Rigidbody2D>();
         _rb.velocity = initSpeed + speedVector * LAUNCH_FORCE;
         _rb.AddForce(speedVector * LAUNCH_FORCE, ForceMode2D.Impulse);
         _col = GetComponent<Collider2D>();
@@ -64,9 +70,14 @@ public class Mine : MonoBehaviour {
 		if (!player) {
 			player = coll.otherCollider.gameObject.GetComponent<Player>();
 		}
-		if (player && player.CanAcceptMine) {
-			EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index, mineType = mineType });
-			Collect();
+		if (player) {
+			if (player.CanAcceptMine) {
+				EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index, mineType = mineType });
+				Collect();
+			}
+		} else {
+			// Collision with other object, non-player
+			ChangeLayerToRestState();
 		}
 	}
 
@@ -101,4 +112,12 @@ public class Mine : MonoBehaviour {
     void EnableCollision() {
         _col.enabled = true;
     }
+
+	void ChangeLayerToMotionState() {
+		gameObject.layer = 10;
+	}
+
+	void ChangeLayerToRestState() {
+		gameObject.layer = 9;
+	}
 }

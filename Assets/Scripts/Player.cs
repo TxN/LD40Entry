@@ -208,7 +208,8 @@ public class Player : MonoBehaviour {
         CalcShipMass();
 		if ( _collectedMines.Count() > maxMines ) {
 			Kill();
-		} 
+		}
+        ActualizeLayer();
 	}
 
     void LaunchMine(Vector2 direction, int mineType) {
@@ -313,4 +314,20 @@ public class Player : MonoBehaviour {
 		//_rb.drag = Mathf.Clamp(_initDrag + (diff * 1) * sp.magnitude * 0.001f, _initDrag, dynamicDragMaxValue);
 		_rb.drag = Mathf.Clamp(_initDrag + (diff * diff * dynamicDragAngleK), _initDrag, dynamicDragMaxValue);
 	}
+
+    void ChangeLayerToMineAcceptableState() {
+		gameObject.layer = 0;
+	}
+
+    void ChangeLayerToRestMineSkippingState() {
+        gameObject.layer = 8;
+    }
+
+    void ActualizeLayer() {
+        if (_collectedMines.Count() < GameState.Instance.MaxMinesBeforeExplosion) {
+            ChangeLayerToMineAcceptableState();
+        } else {
+            ChangeLayerToRestMineSkippingState();
+        }
+    }
 }

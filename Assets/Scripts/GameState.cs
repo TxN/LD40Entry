@@ -29,7 +29,7 @@ public class GameState : MonoBehaviour {
 	float _startTime = 0f;
 	List<TrackNode> _trackNodes = new List<TrackNode>();
 	Player _leader = null;
-	int _maximumMines = 2;
+	int _maximumMines = 4;
 
 	int _pauseSelection = 0;
 
