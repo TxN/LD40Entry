@@ -39,6 +39,8 @@ public class Player : MonoBehaviour {
 	float _lastMineLaunchTime = 0f;
 	float _lastDashUseTime = 0f;
 
+    int _dashNumberAvailable = 3;
+
     //=========
     //Movement
     //=========
@@ -194,10 +196,13 @@ public class Player : MonoBehaviour {
             }
         }
 
-		if (_input.GetDashTrigger() && Time.time - _lastDashUseTime >= DASH_COOLDOWN) {
+		if (_input.GetDashTrigger() && Time.time - _lastDashUseTime >= DASH_COOLDOWN &&
+            _dashNumberAvailable > 0
+        ) {
             int dashIncreaseRate = _collectedMines.GetDashIncreaseRate();
 			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * (2f + 0.25f * dashIncreaseRate), ForceMode2D.Impulse);
 			_lastDashUseTime = Time.time;
+            _dashNumberAvailable -= 1;
         }
     }
 
@@ -294,7 +299,13 @@ public class Player : MonoBehaviour {
 		if (trackNode) {
 			int trackNodeIndex = trackNode.GetIndex ();
 			// If Player moved to the next waypoint of passed lap-start position
+            // TODO: here is small bug - if player will go back on start and then pass start - condition will be met. Seems like not-real scenario.
 			if (lastPassedWaypoint < trackNodeIndex || (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1)) {
+                // if start passed
+                if (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1) {
+                    _dashNumberAvailable = 3;
+                }
+
 				waypointSum += WAYPOINT_VALUE;
 				lastPassedWaypoint = trackNodeIndex;
 			}
