@@ -12,6 +12,7 @@ public class Player : MonoBehaviour {
 	const float MINE_LAUNCH_MIN_DISTANCE = 1.3f;
 	const int WAYPOINT_VALUE = 1;
 
+	public List<GameObject> MineSlots = new List<GameObject>();
 
 	public GameObject BodyModel = null;
 	public GameObject InternalsModel = null;
@@ -61,28 +62,28 @@ public class Player : MonoBehaviour {
     public float dynamicDragAngleK = 0.0001f;
 
     class CollectedMines {
-        List<int> _mines = new List<int>();
+        public List<Mine.MineTypes> Mines = new List<Mine.MineTypes>();
 
-        public void Add(int mineType) {
-            _mines.Add(mineType);
+        public void Add(Mine.MineTypes mineType) {
+            Mines.Add(mineType);
         }
 
-        public void Remove(int mineType) {
-            _mines.RemoveAt( _mines.FindIndex( x => x == mineType ) );
+        public void Remove(Mine.MineTypes mineType) {
+            Mines.RemoveAt( Mines.FindIndex( x => x == mineType ) );
         }
 
         public int Count() {
-            return _mines.Count;
+            return Mines.Count;
         }
 
-        public bool Exists(int mineType) {
-            return _mines.Exists(x => x == mineType);
+        public bool Exists(Mine.MineTypes mineType) {
+            return Mines.Exists(x => x == mineType);
         }
 
         /* Return number of mines that increase speed */
         public int GetSpeedIncreaseRate() {
-			List<int> speedMines = _mines.FindAll(x => x == (int)Mine.MineTypes.Speed);
-            if (speedMines.Count == 0 || speedMines.Count == _mines.Count) {
+			List<Mine.MineTypes> speedMines = Mines.FindAll(x => x == Mine.MineTypes.Speed);
+            if (speedMines.Count == 0 || speedMines.Count == Mines.Count) {
                 return speedMines.Count;
             }
 
@@ -91,10 +92,10 @@ public class Player : MonoBehaviour {
 
         /* Returns number of mines that decrease speed */
         public int GetSpeedDecreaseRate() {
-			if (_mines.FindAll(x => x == (int)Mine.MineTypes.Simple).Count > 0 || // if simple mines exist
+			if (Mines.FindAll(x => x == Mine.MineTypes.Simple).Count > 0 || // if simple mines exist
                 (GetSpeedIncreaseRate() > 0 && GetDashIncreaseRate() > 0) // or if different mine-types mixed
             ) {
-                return _mines.Count;
+                return Mines.Count;
             }
 
             return 0;
@@ -102,8 +103,8 @@ public class Player : MonoBehaviour {
 
         /* Returns number of mines that increase dash */
         public int GetDashIncreaseRate() {
-			List<int> dashMines = _mines.FindAll(x => x == (int)Mine.MineTypes.Dash);
-            if (dashMines.Count == 0 || dashMines.Count == _mines.Count) {
+			List<Mine.MineTypes> dashMines = Mines.FindAll(x => x == Mine.MineTypes.Dash);
+            if (dashMines.Count == 0 || dashMines.Count == Mines.Count) {
                 return dashMines.Count;
             }
 
@@ -189,8 +190,8 @@ public class Player : MonoBehaviour {
             _moveForce += speedIncreaseRate * 0.25f;
         }
 
-		foreach (int mineType in Enum.GetValues(typeof(Mine.MineTypes))) {
-            if (_input.GetLaunchTrigger(mineType) && _collectedMines.Exists(mineType) ) {
+		foreach (Mine.MineTypes mineType in Enum.GetValues(typeof(Mine.MineTypes))) {
+            if (_input.GetLaunchTrigger((int) mineType) && _collectedMines.Exists(mineType) ) {
                 Vector2 dirVect = _input.GetDirectionVector();
                 LaunchMine(new Vector2(-dirVect.x, dirVect.y), mineType);
             }
@@ -207,9 +208,22 @@ public class Player : MonoBehaviour {
     }
 
 	void UpdateInternals() {
+		//_collectedMines
 		int maxMines = GameState.Instance.MaxMinesBeforeExplosion;
-		float scale = 0.1f + 0.9f *( (float)_collectedMines.Count() / (float) maxMines );
-		InternalsModel.transform.localScale = new Vector3(scale, scale, scale);
+		//float scale = 0.1f + 0.9f *( (float)_collectedMines.Count() / (float) maxMines );
+		//InternalsModel.transform.localScale = new Vector3(scale, scale, scale);
+			
+		foreach (var slot in MineSlots) {
+			slot.SetActive(false);
+		}
+
+		int slotIndex = 0;
+		foreach (var mine in _collectedMines.Mines) {
+			MineSlots[slotIndex].SetActive(true);
+			ColorSetter.UpdateModelColor(MineSlots[slotIndex], Mine.MineTypeToColor(mine));
+			slotIndex++;
+			slotIndex = Mathf.Clamp(slotIndex, 0, MineSlots.Count - 1);
+		}
         CalcShipMass();
 		if ( _collectedMines.Count() > maxMines ) {
 			Kill();
@@ -217,7 +231,7 @@ public class Player : MonoBehaviour {
         ActualizeLayer();
 	}
 
-    void LaunchMine(Vector2 direction, int mineType) {
+    void LaunchMine(Vector2 direction, Mine.MineTypes mineType) {
         if (!_collectedMines.Exists(mineType)) {
             return;
         }

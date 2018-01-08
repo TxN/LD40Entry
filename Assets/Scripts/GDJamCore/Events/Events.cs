@@ -1,4 +1,5 @@
-﻿namespace EventSys {
+﻿
+namespace EventSys {
     public struct Event_PlayerDead {
         public Player Player;
         public int PlayerIndex;
@@ -6,7 +7,7 @@
 
     public struct Event_PlayerMineCollect {
         public int playerIndex;
-        public int mineType;
+        public Mine.MineTypes mineType;
     }
 
     public struct Event_MaximumMinesCount_Change {

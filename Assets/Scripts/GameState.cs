@@ -211,7 +211,7 @@ public class GameState : MonoBehaviour {
 
 			GameObject mineGo = Instantiate(MinePrefab, minePosition, Quaternion.identity, null);
 			mineGo.name = "Mine" + (i + 1);
-			System.Type typeOfMine = Mine.GetTypeOfMineByIntCode((int)Random.Range(0, 3));
+			System.Type typeOfMine = Mine.GetTypeOfMineByIntCode((Mine.MineTypes)Random.Range(0, 3));
 			mineGo.AddComponent(typeOfMine);
 
 			if (!isCalledFromEditor) {

@@ -8,7 +8,7 @@ public class Mine : MonoBehaviour {
 
     public GameObject ExplosionFab = null;
 
-	public int mineType = (int)MineTypes.Simple;
+	public MineTypes mineType = MineTypes.Simple;
 	protected Color mineTypeColor = Color.grey;
 
     Rigidbody2D _rb = null;
@@ -18,7 +18,21 @@ public class Mine : MonoBehaviour {
 	bool _forceFlag = false;
 	Vector2 _lastSpeedVector;
 
-    public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
+	public static Color MineTypeToColor(MineTypes type) {
+		switch (type) {
+			case MineTypes.Simple:
+				return Color.grey;
+			case MineTypes.Speed:
+				return Color.blue;
+			case MineTypes.Dash:
+				return Color.red;
+			default:
+				return Color.white;
+		}
+	}
+
+
+	public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
 		if (speedVector == Vector2.zero && initSpeed == Vector2.zero) {
 			ChangeLayerToRestState();
 		} else {
@@ -39,13 +53,13 @@ public class Mine : MonoBehaviour {
 		ColorSetter.UpdateModelColor(gameObject, mineTypeColor);
     }
 
-	public static System.Type GetTypeOfMineByIntCode(int type) {
+	public static System.Type GetTypeOfMineByIntCode(Mine.MineTypes type) {
 		switch (type) {
-			case (int)MineTypes.Simple:
+			case MineTypes.Simple:
 				return typeof(MineSimple);
-			case (int)MineTypes.Speed:
+			case MineTypes.Speed:
 				return typeof(MineSpeed);
-			case (int)MineTypes.Dash:
+			case MineTypes.Dash:
 				return typeof(MineDash);
 			default:
 				return typeof(MineSimple);
