@@ -13,6 +13,7 @@ public class Lobby : MonoBehaviour {
     const string READY_KEY = "_pause";
 
 	public List<GameObject> JoinObjects = new List<GameObject>();
+	public List<Color> PlayerColors = new List<Color>();
 
 	PlayerInfoHolder _holder = null;
 
@@ -52,7 +53,8 @@ public class Lobby : MonoBehaviour {
 						hideGO.SetActive(false);
 					}
 				} else {
-					Color col = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+					//Color col = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+					Color col = PlayerColors[i];
 					_holder.AddPlayerInfo(new PlayerInfo(col, i));
 					GameObject showGO = JoinObjects.Find(objs => objs.activeSelf == false);
 					if ( showGO ) {
