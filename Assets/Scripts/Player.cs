@@ -11,6 +11,7 @@ public class Player : MonoBehaviour {
 	const float DASH_COOLDOWN = 2f;
 	const float MINE_LAUNCH_MIN_DISTANCE = 1.3f;
 	const int WAYPOINT_VALUE = 1;
+    const int INITIAL_NUMBER_OF_DASHES = 6;
 
 	public List<GameObject> MineSlots = new List<GameObject>();
 
@@ -40,7 +41,7 @@ public class Player : MonoBehaviour {
 	float _lastMineLaunchTime = 0f;
 	float _lastDashUseTime = 0f;
 
-    int _dashNumberAvailable = 3;
+    int _dashNumberAvailable = INITIAL_NUMBER_OF_DASHES;
 
     //=========
     //Movement
@@ -201,7 +202,7 @@ public class Player : MonoBehaviour {
             _dashNumberAvailable > 0
         ) {
             int dashIncreaseRate = _collectedMines.GetDashIncreaseRate();
-			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * (2f + 0.25f * dashIncreaseRate), ForceMode2D.Impulse);
+			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * (1f + 0.25f * dashIncreaseRate), ForceMode2D.Impulse);
 			_lastDashUseTime = Time.time;
             _dashNumberAvailable -= 1;
         }
@@ -317,7 +318,7 @@ public class Player : MonoBehaviour {
 			if (lastPassedWaypoint < trackNodeIndex || (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1)) {
                 // if start passed
                 if (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1) {
-                    _dashNumberAvailable = 3;
+                    _dashNumberAvailable = INITIAL_NUMBER_OF_DASHES;
                 }
 
 				waypointSum += WAYPOINT_VALUE;
