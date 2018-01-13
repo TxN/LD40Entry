@@ -17,6 +17,7 @@ public class Player : MonoBehaviour {
 
 	public GameObject BodyModel = null;
 	public GameObject InternalsModel = null;
+	public GameObject DashIndicator = null;
 
     public GameObject DeathPrefab = null;
     public GameObject MinePrefab = null;
@@ -201,15 +202,19 @@ public class Player : MonoBehaviour {
             }
         }
 
-		if (_input.GetDashTrigger() && Time.time - _lastDashUseTime >= DASH_COOLDOWN &&
-            _dashNumberAvailable > 0
-        ) {
+		if ( _input.GetDashTrigger() && CanDash ) {
             int dashIncreaseRate = _collectedMines.GetDashIncreaseRate();
 			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * (1f + 0.25f * dashIncreaseRate), ForceMode2D.Impulse);
 			_lastDashUseTime = Time.time;
             _dashNumberAvailable -= 1;
         }
     }
+
+	public bool CanDash {
+		get {
+			return Time.time - _lastDashUseTime >= DASH_COOLDOWN && _dashNumberAvailable > 0;
+		}
+	}
 
 	void UpdateInternals() {
 		//_collectedMines
@@ -291,6 +296,8 @@ public class Player : MonoBehaviour {
             Kill();
             Debug.Log("Death " + _playerIndex);
         }
+
+		DashIndicator.SetActive(CanDash);
     }
 
     void FixedUpdate() {
