@@ -188,7 +188,7 @@ public class Player : MonoBehaviour {
         _moveForce = _input.GetMoveAcceleration();
         int speedIncreaseRate = _collectedMines.GetSpeedIncreaseRate();
         if (_moveForce > 0) {
-            _moveForce += speedIncreaseRate * 0.25f;
+            _moveForce += speedIncreaseRate * 0.095f;
         }
 
 		foreach (Mine.MineTypes mineType in Enum.GetValues(typeof(Mine.MineTypes))) {
