@@ -350,6 +350,33 @@ public class Player : MonoBehaviour {
 		//_rb.drag = Mathf.Clamp(_initDrag + (diff * 1) * sp.magnitude * 0.001f, _initDrag, dynamicDragMaxValue);
 		_rb.drag = Mathf.Clamp(_initDrag + (diff * diff * dynamicDragAngleK), _initDrag, dynamicDragMaxValue);
 	}
+    Vector2 GetForceDirection()
+    {
+		Vector2 sp = _rb.velocity;
+        if (sp.magnitude < dynamicDragSpeedMinValue) { return Vector2.up; }
+		float speed_angle = Mathf.Atan2(sp.y, -sp.x) * Mathf.Rad2Deg;
+        if (speed_angle < 0) speed_angle = 360 + speed_angle;
+        float rot_ang_val = _rotationAngle;
+        if (rot_ang_val >= -90 && rot_ang_val <= 90) { rot_ang_val = 90 - rot_ang_val; }
+        else if (rot_ang_val >= 90 && rot_ang_val <= 180) { rot_ang_val = 90 - rot_ang_val; }
+        else  { rot_ang_val = -270 - rot_ang_val; }
+        if (rot_ang_val < 0) rot_ang_val = 360 + rot_ang_val;
+		float diff = rot_ang_val - speed_angle;
+        float beta = diff;
+        Mathf.Clamp(beta, -90f, 90f);
+        Debug.Log(beta);
+        
+        //_rb.velocity = new Vector2(new_x, new_y); 
+        Vector2 localUp = transform.TransformDirection(Vector2.up);
+
+        float new_x = -(Mathf.Sin(beta * Mathf.Deg2Rad));
+        float new_y = Mathf.Cos(beta * Mathf.Deg2Rad);
+        //adjustedForceDirection = new Vector2(new_x, new_y);
+        //Debug.Log(adjustedForceDirection);
+        Debug.Log("new_x:" + new_x + "    new_y:" + new_y); 
+        //return new Vector2(new_x, new_y);
+        return Vector2.up; 
+    }
 
     void ChangeLayerToMineAcceptableState() {
 		gameObject.layer = 0;
