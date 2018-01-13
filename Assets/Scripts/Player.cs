@@ -61,7 +61,7 @@ public class Player : MonoBehaviour {
 	public bool dynamicDrag = true;
     public float dynamicDragMaxValue = 5f;
     public float dynamicDragSpeedMinValue = 0.5f;
-    public float dynamicDragAngleK = 0.0001f;
+    public float dynamicDragAngleK = 4f;
 
     class CollectedMines {
         public List<Mine.MineTypes> Mines = new List<Mine.MineTypes>();
@@ -289,7 +289,7 @@ public class Player : MonoBehaviour {
 
 		if (dynamicDrag)
 		{
-			DynamicDragUpdate();
+			//DynamicDragUpdate();
 		}
 
         if (_becameInvisibleFlag) {
@@ -302,6 +302,7 @@ public class Player : MonoBehaviour {
 
     void FixedUpdate() {
         if (Mathf.Abs(_moveForce) > 0.1f) {
+            UpdateTurnForce();
             _rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION*_moveForce, ForceMode2D.Force);
         }
     }
@@ -376,6 +377,38 @@ public class Player : MonoBehaviour {
         Debug.Log("new_x:" + new_x + "    new_y:" + new_y); 
         //return new Vector2(new_x, new_y);
         return Vector2.up; 
+    }
+    void UpdateTurnForce() {
+        Vector2 sp = _rb.velocity;
+        if (sp.magnitude < dynamicDragSpeedMinValue) { return; }
+        float speed_angle = Mathf.Atan2(sp.y, -sp.x) * Mathf.Rad2Deg;
+        if (speed_angle < 0) speed_angle = 360 + speed_angle;
+        float rot_ang_val = _rotationAngle;
+        if (rot_ang_val >= -90 && rot_ang_val <= 90) { rot_ang_val = 90 - rot_ang_val; } else if (rot_ang_val >= 90 && rot_ang_val <= 180) { rot_ang_val = 90 - rot_ang_val; } else { rot_ang_val = -270 - rot_ang_val; }
+        if (rot_ang_val < 0) rot_ang_val = 360 + rot_ang_val;
+        float diff = rot_ang_val - speed_angle;
+        float beta = diff;
+        //Mathf.Clamp(beta, -90f, 90f);
+        //Debug.Log(beta);
+        beta = Mathf.Sin(beta * Mathf.Deg2Rad);
+
+        float amplitude = dynamicDragAngleK * beta * 100000;
+        //Debug.Log(amplitude);
+        Vector2 correction_force = new Vector2(amplitude, 0);
+        
+        _rb.AddForce(transform.TransformDirection(correction_force), ForceMode2D.Force);
+        //_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION*_moveForce, ForceMode2D.Force);
+
+        //_rb.velocity = new Vector2(new_x, new_y); 
+        //Vector2 localUp = transform.TransformDirection(Vector2.up);
+
+        //float new_x = -(Mathf.Sin(beta * Mathf.Deg2Rad));
+        //float new_y = Mathf.Cos(beta * Mathf.Deg2Rad);
+        //adjustedForceDirection = new Vector2(new_x, new_y);
+        //Debug.Log(adjustedForceDirection);
+        //Debug.Log("new_x:" + new_x + "    new_y:" + new_y);
+        //return new Vector2(new_x, new_y);
+ 
     }
 
     void ChangeLayerToMineAcceptableState() {

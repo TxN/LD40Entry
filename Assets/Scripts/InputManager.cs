@@ -61,7 +61,8 @@ public class InputManager : MonoBehaviour {
 	}
 
     public bool GetDashTrigger() {
-		return InputMng.GetButton("Left Trigger", playerId) || InputMng.GetAxis("Left Trigger", playerId) > 0.5f;
+        bool flag = InputMng.GetButton("Left Bumper", playerId);
+		return flag;
     }
 
 	void Update() {
