@@ -117,7 +117,7 @@ public class GameState : MonoBehaviour {
         CurrentNode = FirstTrackNode;
         var holder = FindObjectOfType<PlayerInfoHolder>();
         SpawnPlayers(holder.playersInfos);
-		SpawnMines (_trackNodes, Players.Count, 40);
+		SpawnMines (_trackNodes, Players.Count, 20);
 		
         EventManager.Subscribe<Event_Paused>(this, OnPauseToggle);
         EventManager.Subscribe<Event_PlayerDead>(this, OnPlayerDead);
@@ -180,8 +180,8 @@ public class GameState : MonoBehaviour {
 
 		int minesTotal = playersCount * MaxMinesBeforeExplosion + playersCount*3 + additionalMines;
 
-		int maxTrackNodesBetweenMines = orderedTrackNodes.Count / minesTotal;
-		int minTrackNodesBetweenMines = maxTrackNodesBetweenMines / 2;
+		int maxTrackNodesBetweenMines = orderedTrackNodes.Count / minesTotal + 1; // round up
+		int minTrackNodesBetweenMines = maxTrackNodesBetweenMines; // keep mines on max distance between each other
 
 		int lastTrackNodeIndexWithMine = 1; // fist spawned mine
 		int minePositionOffset = 0;
@@ -192,7 +192,7 @@ public class GameState : MonoBehaviour {
 			} while (minePositionOffset == 0);
 
 			int position = lastTrackNodeIndexWithMine + minePositionOffset;
-			TrackNode trackNode = orderedTrackNodes [position - 1];
+			TrackNode trackNode = orderedTrackNodes [position % orderedTrackNodes.Count - 1];
 			lastTrackNodeIndexWithMine = position;
 
 			Vector3 minePosition;
