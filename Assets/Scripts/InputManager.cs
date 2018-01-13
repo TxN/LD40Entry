@@ -39,21 +39,9 @@ public class InputManager : MonoBehaviour {
 		);
 	}
 
-	public Vector2 GetLaunchDirection(){
-		Vector2 vec = new Vector2(
-			InputMng.GetAxis("Right Stick Horizontal", playerId),
-			InputMng.GetAxis("Right Stick Vertical", playerId)
-		);
-        return vec.normalized;
-	}
-
 	public float GetMoveAcceleration (){
 		if (InputMng.GetButton ("Right Trigger", playerId) || InputMng.GetAxis("Right Trigger", playerId) > 0.5f) {
 			return 1f;
-		}
-
-		if (InputMng.GetButton ("Left Trigger", playerId)|| InputMng.GetAxis("Left Trigger", playerId) > 0.5f) {
-			return -1f;
 		}
 
 		return 0f;
@@ -73,7 +61,7 @@ public class InputManager : MonoBehaviour {
 	}
 
     public bool GetDashTrigger() {
-		return InputMng.GetButtonDown("Right Bumper", playerId);
+		return InputMng.GetButton("Left Trigger", playerId) || InputMng.GetAxis("Left Trigger", playerId) > 0.5f;
     }
 
 	void Update() {
