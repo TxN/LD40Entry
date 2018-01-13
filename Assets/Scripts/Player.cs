@@ -166,6 +166,9 @@ public class Player : MonoBehaviour {
     void OnMineCollect(Event_PlayerMineCollect e) {
         if (e.playerIndex == _playerIndex) {
             _collectedMines.Add(e.mineType);
+            if (e.mineType == Mine.MineTypes.Dash && _dashNumberAvailable < INITIAL_NUMBER_OF_DASHES) {
+                _dashNumberAvailable += 1;
+            }
         }
         PickupSource.Play();
 		UpdateInternals();
