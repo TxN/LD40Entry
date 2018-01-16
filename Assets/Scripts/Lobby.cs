@@ -96,7 +96,7 @@ public class Lobby : MonoBehaviour {
 	}
 
 	void GoToGame() {
-		SceneManager.LoadScene("track1");
+		SceneManager.LoadScene("track2");
 	}
 
     AudioSource _audioSrc = null;
