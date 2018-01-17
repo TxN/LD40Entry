@@ -89,7 +89,8 @@ public class TrackNode : MonoBehaviour {
 		return index;
 	}
 
-	protected void MovePoles()
+	//protected void MovePoles() ёбнул паблик для Editor\TrackScale. хз зачем он протектед
+	public void MovePoles()
 	{
         if (_lastP1Shift == pole1Shift && _lastP2Shift == pole2Shift) {
             return;
