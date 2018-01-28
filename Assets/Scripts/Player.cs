@@ -19,6 +19,7 @@ public class Player : MonoBehaviour {
 	public GameObject InternalsModel = null;
 	public GameObject DashIndicator = null;
 
+    public GameObject SpeedIndicator = null;
     public GameObject DeathPrefab = null;
     public GameObject MinePrefab = null;
 
@@ -37,10 +38,13 @@ public class Player : MonoBehaviour {
     }
     int   _playerIndex = 0;
 
-    CollectedMines _collectedMines = new CollectedMines();
+    //TODO should not be public
+    public CollectedMines _collectedMines = new CollectedMines();
 
 	float _lastMineLaunchTime = 0f;
 	float _lastDashUseTime = 0f;
+
+    float _lashDashIncreasmentStartingTime = 0f;
 
     int _dashNumberAvailable = INITIAL_NUMBER_OF_DASHES;
 
@@ -63,7 +67,7 @@ public class Player : MonoBehaviour {
     public float dynamicDragSpeedMinValue = 0.5f;
     public float dynamicDragAngleK = 4f;
 
-    class CollectedMines {
+    public class CollectedMines {
         public List<Mine.MineTypes> Mines = new List<Mine.MineTypes>();
 
         public void Add(Mine.MineTypes mineType) {
@@ -72,6 +76,10 @@ public class Player : MonoBehaviour {
 
         public void Remove(Mine.MineTypes mineType) {
             Mines.RemoveAt( Mines.FindIndex( x => x == mineType ) );
+        }
+
+        public void Clear() {
+            Mines.Clear();
         }
 
         public int Count() {
@@ -94,8 +102,8 @@ public class Player : MonoBehaviour {
 
         /* Returns number of mines that decrease speed */
         public int GetSpeedDecreaseRate() {
-			if (Mines.FindAll(x => x == Mine.MineTypes.Simple).Count > 0 || // if simple mines exist
-                (GetSpeedIncreaseRate() > 0 && GetDashIncreaseRate() > 0) // or if different mine-types mixed
+			if (Mines.FindAll(x => x == Mine.MineTypes.Simple).Count > 0 // || // if simple mines exist
+               // (GetSpeedIncreaseRate() > 0 && GetDashIncreaseRate() > 0) // or if different mine-types mixed
             ) {
                 return Mines.Count;
             }
@@ -111,6 +119,23 @@ public class Player : MonoBehaviour {
             }
 
             return 0;
+        }
+
+        public Mine.MineTypes GetTypeOfMostCommonMines() {
+            int speedMines = GetSpeedIncreaseRate();
+            int dashMines = GetDashIncreaseRate();
+            int simpleMines = GetSpeedDecreaseRate();
+
+            int max = Math.Max(speedMines, Math.Max(dashMines, simpleMines));
+
+            if (max == speedMines) {
+                return Mine.MineTypes.Speed;
+            } else if (max == dashMines) {
+                return Mine.MineTypes.Dash;
+            } else {
+                // NO common mines TODO
+                return Mine.MineTypes.Simple;
+            }
         }
     }
 
@@ -145,6 +170,10 @@ public class Player : MonoBehaviour {
      
         ColorSetter.UpdateModelColor(BodyModel, _shipColor);
 
+        SpeedIndicator =  Instantiate(SpeedIndicator, new Vector3(0,0,0), Quaternion.identity, null);
+        SpeedIndicator.transform.parent = gameObject.transform;
+        SpeedIndicator.transform.localPosition = new Vector3(0,-0.3f,0);
+
         EventManager.Subscribe<Event_PlayerMineCollect>(this, OnMineCollect);
 		EventManager.Subscribe<Event_MaximumMinesCount_Change>(this, OnMineMaxCountChange);
 		EventManager.Subscribe<Event_ControlsLockState_Change>(this, OnControlsLockStateChange);
@@ -166,13 +195,57 @@ public class Player : MonoBehaviour {
 
     void OnMineCollect(Event_PlayerMineCollect e) {
         if (e.playerIndex == _playerIndex) {
-            _collectedMines.Add(e.mineType);
-            if (e.mineType == Mine.MineTypes.Dash && _dashNumberAvailable < INITIAL_NUMBER_OF_DASHES) {
-                _dashNumberAvailable += 1;
+            if (e.mineType == Mine.MineTypes.Simple) {
+                // calculate mine to swap; TODO: it must be in another place (GameState or another mediator)
+                if (e.attackerIndex > -1) {
+                    Player attacker = GameState.Instance.Players[e.attackerIndex];//(Player)FindObjectsOfType(typeof(Player))[e.attackerIndex];
+                    Mine.MineTypes commonMineTypeToSteal = attacker._collectedMines.GetTypeOfMostCommonMines();
+
+                    //Incorrectness here, always speed swap used
+                    if (commonMineTypeToSteal == Mine.MineTypes.Simple) {
+                        if (_collectedMines.Exists(Mine.MineTypes.Speed)) {
+                            Debug.Log("Swap speed!");
+                            // _collectedMines.Remove(Mine.MineTypes.Speed);
+                            // EventManager.Fire(new Event_PlayerMineCollect() {
+                            //     playerIndex = attacker.Index, mineType = Mine.MineTypes.Speed, attackerIndex = -1 
+                            // });
+                            _SwapMine(Mine.MineTypes.Speed, attacker);
+                        } else if (_collectedMines.Exists(Mine.MineTypes.Dash)) {
+                            _SwapMine(Mine.MineTypes.Dash, attacker);
+                            Debug.Log("Swap dash!");
+                        }
+                    } else if (commonMineTypeToSteal == Mine.MineTypes.Speed) {
+                        if (_collectedMines.Exists(Mine.MineTypes.Speed)) {
+                            _SwapMine(Mine.MineTypes.Speed, attacker);
+                            Debug.Log("Swap speed!");
+                        } else if (_collectedMines.Exists(Mine.MineTypes.Dash)) {
+                            _SwapMine(Mine.MineTypes.Dash, attacker);
+                            Debug.Log("Swap dash!");
+                        }
+                    } else {
+                        if (_collectedMines.Exists(Mine.MineTypes.Dash)) {
+                            _SwapMine(Mine.MineTypes.Dash, attacker);
+                            Debug.Log("Swap dash!");
+                        } else if (_collectedMines.Exists(Mine.MineTypes.Speed)) {
+                            _SwapMine(Mine.MineTypes.Speed, attacker);
+                            Debug.Log("Swap speed!");
+                        }
+                    }
+                }
+                // Send mine to attacker
+                // Add simple mine
             }
+            _collectedMines.Add(e.mineType);
         }
         PickupSource.Play();
 		UpdateInternals();
+    }
+
+    void _SwapMine(Mine.MineTypes type, Player attacker) {
+        _collectedMines.Remove(type);
+        EventManager.Fire(new Event_PlayerMineCollect() {
+            playerIndex = attacker.Index, mineType = type, attackerIndex = -1 
+        });
     }
 
 	void OnMineMaxCountChange(Event_MaximumMinesCount_Change e) {
@@ -192,7 +265,7 @@ public class Player : MonoBehaviour {
         _moveForce = _input.GetMoveAcceleration();
         int speedIncreaseRate = _collectedMines.GetSpeedIncreaseRate();
         if (_moveForce > 0) {
-            _moveForce += speedIncreaseRate * 0.095f;
+            _moveForce += (float)Math.Pow(speedIncreaseRate, 2) * 0.03f;
         }
 
 		foreach (Mine.MineTypes mineType in Enum.GetValues(typeof(Mine.MineTypes))) {
@@ -203,8 +276,7 @@ public class Player : MonoBehaviour {
         }
 
 		if ( _input.GetDashTrigger() && CanDash ) {
-            int dashIncreaseRate = _collectedMines.GetDashIncreaseRate();
-			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION * (1f + 0.25f * dashIncreaseRate), ForceMode2D.Impulse);
+			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION, ForceMode2D.Impulse);
 			_lastDashUseTime = Time.time;
             _dashNumberAvailable -= 1;
         }
@@ -229,7 +301,13 @@ public class Player : MonoBehaviour {
 		int slotIndex = 0;
 		foreach (var mine in _collectedMines.Mines) {
 			MineSlots[slotIndex].SetActive(true);
-			ColorSetter.UpdateModelColor(MineSlots[slotIndex], Mine.MineTypeToColor(mine));
+
+            Color mineColor = Mine.MineTypeToColor(mine);
+            if (_lashDashIncreasmentStartingTime > 0f) {
+                // It is indicator of full-dash collected
+                mineColor = Color.magenta;
+            }
+			ColorSetter.UpdateModelColor(MineSlots[slotIndex], mineColor);
 			slotIndex++;
 			slotIndex = Mathf.Clamp(slotIndex, 0, MineSlots.Count - 1);
 		}
@@ -267,7 +345,7 @@ public class Player : MonoBehaviour {
         mineObj.AddComponent(typeOfMine);
 
         Mine mine = mineObj.GetComponent(typeOfMine) as Mine;
-        mine.Spawn(direction,_rb.velocity);
+        mine.Spawn(direction,_rb.velocity, _playerIndex);
 
 		_collectedMines.Remove(mineType);
 		UpdateInternals();
@@ -298,6 +376,30 @@ public class Player : MonoBehaviour {
         }
 
 		DashIndicator.SetActive(CanDash);
+
+        if (_collectedMines.Count() == GameState.Instance.MaxMinesBeforeExplosion
+                && _collectedMines.GetSpeedIncreaseRate() == GameState.Instance.MaxMinesBeforeExplosion
+        ) {
+            SpeedIndicator.SetActive(true);
+        } else {
+            SpeedIndicator.SetActive(false);
+        }
+        
+        if (_collectedMines.Count() == GameState.Instance.MaxMinesBeforeExplosion
+            && _collectedMines.GetDashIncreaseRate() == GameState.Instance.MaxMinesBeforeExplosion
+            && _lashDashIncreasmentStartingTime <= 0f
+        ) {
+
+            _lashDashIncreasmentStartingTime = Time.time;
+            UpdateInternals();
+        }
+
+        if (_lashDashIncreasmentStartingTime > 0f && Time.time - _lashDashIncreasmentStartingTime >= DASH_COOLDOWN * 1.5f) {
+            _dashNumberAvailable += 1;
+            _collectedMines.Clear();
+            _lashDashIncreasmentStartingTime = 0f;
+            UpdateInternals();
+        }
     }
 
     void FixedUpdate() {
@@ -329,7 +431,9 @@ public class Player : MonoBehaviour {
 			if (lastPassedWaypoint < trackNodeIndex || (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1)) {
                 // if start passed
                 if (lastPassedWaypoint > trackNodeIndex && trackNodeIndex == 1) {
-                    _dashNumberAvailable = INITIAL_NUMBER_OF_DASHES;
+                    if (_dashNumberAvailable < INITIAL_NUMBER_OF_DASHES) {
+                        _dashNumberAvailable = INITIAL_NUMBER_OF_DASHES;
+                    }
                 }
 
 				waypointSum += WAYPOINT_VALUE;

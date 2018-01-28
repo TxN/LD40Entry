@@ -17,6 +17,7 @@ public class Mine : MonoBehaviour {
     bool _appeared = false;
 	bool _forceFlag = false;
 	Vector2 _lastSpeedVector;
+	int attackerIndex = -1;
 
 	public static Color MineTypeToColor(MineTypes type) {
 		switch (type) {
@@ -32,7 +33,9 @@ public class Mine : MonoBehaviour {
 	}
 
 
-	public void Spawn(Vector2 speedVector, Vector2 initSpeed) {
+	public void Spawn(Vector2 speedVector, Vector2 initSpeed, int attackerIndex = -1) {
+		this.attackerIndex = attackerIndex;
+
 		if (speedVector == Vector2.zero && initSpeed == Vector2.zero) {
 			ChangeLayerToRestState();
 		} else {
@@ -86,7 +89,7 @@ public class Mine : MonoBehaviour {
 		}
 		if (player) {
 			if (player.CanAcceptMine) {
-				EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index, mineType = mineType });
+				EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index, mineType = mineType, attackerIndex = attackerIndex });
 				Collect();
 			}
 		} else {
@@ -133,5 +136,7 @@ public class Mine : MonoBehaviour {
 
 	void ChangeLayerToRestState() {
 		gameObject.layer = 9;
+		// reset attacker index
+		attackerIndex = -1;
 	}
 }
