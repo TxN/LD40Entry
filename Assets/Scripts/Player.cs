@@ -46,6 +46,8 @@ public class Player : MonoBehaviour {
 
     public AudioSource PickupSource = null;
 
+	public AnimationCurve ThrustCurve = null;
+
     Color _shipColor = Color.white;
     public Color PlayerColor {
         get {
@@ -525,7 +527,8 @@ public class Player : MonoBehaviour {
     void FixedUpdate() {
         if (Mathf.Abs(_moveForce) > 0.1f) {
             UpdateTurnForce();
-            _rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION*_moveForce, ForceMode2D.Force);
+			float collinearCoef = Mathf.Abs(Vector3.Dot(_rb.velocity.normalized, transform.TransformDirection(Vector2.up)));
+			_rb.AddForce(transform.TransformDirection(Vector2.up) * MAX_ACCELERATION*_moveForce * ThrustCurve.Evaluate(_rb.velocity.magnitude* collinearCoef), ForceMode2D.Force);
         }
     }
 

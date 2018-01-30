@@ -975,6 +975,48 @@ MonoBehaviour:
   waypointSum: 0
   lastPassedWaypoint: 0
   PickupSource: {fileID: 82714334335928428}
+  ThrustCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: -0.14184713
+      value: 1.4182559
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 6.9515038
+      value: 1.4014194
+      inSlope: -0.017121697
+      outSlope: -0.017121697
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 13.912113
+      value: 0.9362114
+      inSlope: -0.092983246
+      outSlope: -0.092983246
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 15.732976
+      value: 0.7088864
+      inSlope: -0.09634772
+      outSlope: -0.09634772
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 18.411566
+      value: 0.3201138
+      inSlope: -0.17955899
+      outSlope: -0.17955899
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 19.850159
+      value: -0.0065460205
+      inSlope: -0.086424224
+      outSlope: -0.086424224
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
   dynamicDrag: 1
   dynamicDragMaxValue: 5
   dynamicDragSpeedMinValue: 0.5
