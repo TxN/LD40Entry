@@ -86,6 +86,7 @@ public class GameState : MonoBehaviour {
 			var newLapNum = 1 + (_leader.waypointSum / _trackNodes.Count);
 			if (newLapNum != _lastLapNum) {
 				EventManager.Fire(new Event_LapPassed() { lap = _lastLapNum });
+				SpawnMines (_trackNodes, Players.Count, 10, false, true);
 				_lastLapNum = newLapNum;
 			}
 			return _lastLapNum;
@@ -166,9 +167,9 @@ public class GameState : MonoBehaviour {
         }
     }
 
-	public void SpawnMines(List<TrackNode> orderedTrackNodes, int playersCount, int additionalMines, bool isCalledFromEditor = false) {
+	public void SpawnMines(List<TrackNode> orderedTrackNodes, int playersCount, int additionalMines, bool isCalledFromEditor = false, bool forceSpawning = false) {
 		Mine[] existingMines = FindObjectsOfType<Mine>();
-		if (existingMines.Length > 0) {
+		if (existingMines.Length > 0 && !forceSpawning) {
 			if (!isCalledFromEditor) {
 				foreach(Mine mine in existingMines) {
 					mine.Spawn(new Vector2(0, 0), new Vector2(0, 0));
