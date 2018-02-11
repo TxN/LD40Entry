@@ -45,8 +45,11 @@ public class Player : MonoBehaviour {
 	float _lastDashUseTime = 0f;
 
     float _lashDashIncreasmentStartingTime = 0f;
+    float _lastSpeedFullyCollectedTime = 0f;
 
-    int _dashNumberAvailable = INITIAL_NUMBER_OF_DASHES;
+    int _dashNumberAvailable = 0;
+
+    float _dashGenerationTimer = 0f;
 
     //=========
     //Movement
@@ -102,13 +105,7 @@ public class Player : MonoBehaviour {
 
         /* Returns number of mines that decrease speed */
         public int GetSpeedDecreaseRate() {
-			if (Mines.FindAll(x => x == Mine.MineTypes.Simple).Count > 0 // || // if simple mines exist
-               // (GetSpeedIncreaseRate() > 0 && GetDashIncreaseRate() > 0) // or if different mine-types mixed
-            ) {
-                return Mines.Count;
-            }
-
-            return 0;
+            return Mines.FindAll(x => x == Mine.MineTypes.Simple).Count;
         }
 
         /* Returns number of mines that increase dash */
@@ -204,7 +201,7 @@ public class Player : MonoBehaviour {
                     //Incorrectness here, always speed swap used
                     if (commonMineTypeToSteal == Mine.MineTypes.Simple) {
                         if (_collectedMines.Exists(Mine.MineTypes.Speed)) {
-                            Debug.Log("Swap speed!");
+                            // Debug.Log("Swap speed!");
                             // _collectedMines.Remove(Mine.MineTypes.Speed);
                             // EventManager.Fire(new Event_PlayerMineCollect() {
                             //     playerIndex = attacker.Index, mineType = Mine.MineTypes.Speed, attackerIndex = -1 
@@ -212,23 +209,23 @@ public class Player : MonoBehaviour {
                             _SwapMine(Mine.MineTypes.Speed, attacker);
                         } else if (_collectedMines.Exists(Mine.MineTypes.Dash)) {
                             _SwapMine(Mine.MineTypes.Dash, attacker);
-                            Debug.Log("Swap dash!");
+                            // Debug.Log("Swap dash!");
                         }
                     } else if (commonMineTypeToSteal == Mine.MineTypes.Speed) {
                         if (_collectedMines.Exists(Mine.MineTypes.Speed)) {
                             _SwapMine(Mine.MineTypes.Speed, attacker);
-                            Debug.Log("Swap speed!");
+                            // Debug.Log("Swap speed!");
                         } else if (_collectedMines.Exists(Mine.MineTypes.Dash)) {
                             _SwapMine(Mine.MineTypes.Dash, attacker);
-                            Debug.Log("Swap dash!");
+                            // Debug.Log("Swap dash!");
                         }
                     } else {
                         if (_collectedMines.Exists(Mine.MineTypes.Dash)) {
                             _SwapMine(Mine.MineTypes.Dash, attacker);
-                            Debug.Log("Swap dash!");
+                            // Debug.Log("Swap dash!");
                         } else if (_collectedMines.Exists(Mine.MineTypes.Speed)) {
                             _SwapMine(Mine.MineTypes.Speed, attacker);
-                            Debug.Log("Swap speed!");
+                            // Debug.Log("Swap speed!");
                         }
                     }
                 }
@@ -264,8 +261,8 @@ public class Player : MonoBehaviour {
         _rotationAngle = _input.GetDirection();
         _moveForce = _input.GetMoveAcceleration();
         int speedIncreaseRate = _collectedMines.GetSpeedIncreaseRate();
-        if (_moveForce > 0) {
-            _moveForce += (float)Math.Pow(speedIncreaseRate, 2) * 0.03f;
+        if (_moveForce > 0 && speedIncreaseRate > 1) {
+            _moveForce += (float)Math.Pow(2, speedIncreaseRate) * 0.01f * speedIncreaseRate;
         }
 
 		foreach (Mine.MineTypes mineType in Enum.GetValues(typeof(Mine.MineTypes))) {
@@ -385,6 +382,7 @@ public class Player : MonoBehaviour {
             SpeedIndicator.SetActive(false);
         }
         
+        // DASH
         if (_collectedMines.Count() == GameState.Instance.MaxMinesBeforeExplosion
             && _collectedMines.GetDashIncreaseRate() == GameState.Instance.MaxMinesBeforeExplosion
             && _lashDashIncreasmentStartingTime <= 0f
@@ -394,11 +392,44 @@ public class Player : MonoBehaviour {
             UpdateInternals();
         }
 
-        if (_lashDashIncreasmentStartingTime > 0f && Time.time - _lashDashIncreasmentStartingTime >= DASH_COOLDOWN * 1.5f) {
-            _dashNumberAvailable += 1;
+        if (_lashDashIncreasmentStartingTime > 0f && Time.time - _lashDashIncreasmentStartingTime >= DASH_COOLDOWN * 3f) {
+            _dashNumberAvailable = INITIAL_NUMBER_OF_DASHES;
             _collectedMines.Clear();
             _lashDashIncreasmentStartingTime = 0f;
             UpdateInternals();
+        }
+
+        // SPEED
+        if (_collectedMines.Count() == GameState.Instance.MaxMinesBeforeExplosion
+            && _collectedMines.GetSpeedIncreaseRate() == GameState.Instance.MaxMinesBeforeExplosion
+            && _lastSpeedFullyCollectedTime <= 0f
+        ) {
+            _lastSpeedFullyCollectedTime = Time.time;
+            UpdateInternals();
+        }
+
+        if (_lastSpeedFullyCollectedTime > 0f && Time.time - _lastSpeedFullyCollectedTime >= DASH_COOLDOWN * 3f) {
+            _collectedMines.Clear();
+            _lastSpeedFullyCollectedTime = 0f;
+            UpdateInternals();
+        }
+
+       int dashIncreaseRate = _collectedMines.GetDashIncreaseRate();
+       float delta = 5f; //TODO
+        if (_moveForce > 0 && dashIncreaseRate > 1) {
+            delta -= (float) dashIncreaseRate;
+        } else {
+            delta = 4f;
+        }
+        // Dash generation
+        if (_dashNumberAvailable < INITIAL_NUMBER_OF_DASHES && _dashGenerationTimer <= 0f) {
+            _dashGenerationTimer = Time.time;
+        }
+
+        if (_dashNumberAvailable < INITIAL_NUMBER_OF_DASHES && Time.time - _dashGenerationTimer + delta >= DASH_COOLDOWN * delta) { //TODO
+            Debug.Log(" + 1 Dash!");
+            _dashNumberAvailable += 1;
+            _dashGenerationTimer = 0f;
         }
     }
 
