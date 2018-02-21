@@ -1333,7 +1333,7 @@ MonoBehaviour:
       type: 0
       axis: 0
       joystick: 0
-    - name: Right Bumper
+    - name: Left Bumper
       description: 
       positive: 101
       negative: 0

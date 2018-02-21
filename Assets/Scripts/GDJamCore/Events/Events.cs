@@ -8,6 +8,7 @@ namespace EventSys {
     public struct Event_PlayerMineCollect {
         public int playerIndex;
         public Mine.MineTypes mineType;
+        public int attackerIndex;
     }
 
     public struct Event_MaximumMinesCount_Change {
