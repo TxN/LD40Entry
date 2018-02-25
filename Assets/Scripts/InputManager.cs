@@ -60,6 +60,10 @@ public class InputManager : MonoBehaviour {
 		}
 	}
 
+	public bool GetShiftTrigger() {
+		return InputMng.GetButton("Button Y", playerId);
+	}
+
     public bool GetDashTrigger() {
         bool flag = InputMng.GetButton("Left Bumper", playerId);
 		return flag;

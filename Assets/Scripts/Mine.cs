@@ -88,7 +88,7 @@ public class Mine : MonoBehaviour {
 			player = coll.otherCollider.gameObject.GetComponent<Player>();
 		}
 		if (player) {
-			if (player.CanAcceptMine) {
+			if (player.CanAcceptMine && player._playerIndex != attackerIndex) {
 				EventManager.Fire(new Event_PlayerMineCollect() { playerIndex = player.Index, mineType = mineType, attackerIndex = attackerIndex });
 				Collect();
 			}

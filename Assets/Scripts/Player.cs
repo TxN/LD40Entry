@@ -3,6 +3,22 @@ using EventSys;
 using System;
 using System.Collections.Generic;
 
+
+public static class Vector2Extension {
+     
+     public static Vector2 Rotate(this Vector2 v, float degrees) {
+         float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+         float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+         
+         float tx = v.x;
+         float ty = v.y;
+         v.x = (cos * tx) - (sin * ty);
+         v.y = (sin * tx) + (cos * ty);
+         return v;
+     }
+ }
+
+
 public class Player : MonoBehaviour {
     const float ROT_SMOOTH_COEF = 0.8f;
     const float MAX_ACCELERATION = 5f;
@@ -36,13 +52,14 @@ public class Player : MonoBehaviour {
             return _shipColor;
         }
     }
-    int   _playerIndex = 0;
+    public int   _playerIndex = 0;
 
     //TODO should not be public
     public CollectedMines _collectedMines = new CollectedMines();
 
 	float _lastMineLaunchTime = 0f;
 	float _lastDashUseTime = 0f;
+    float _lastShiftUseTime = 0f;
 
     float _lashDashIncreasmentStartingTime = 0f;
     float _lastSpeedFullyCollectedTime = 0f;
@@ -277,11 +294,75 @@ public class Player : MonoBehaviour {
 			_lastDashUseTime = Time.time;
             _dashNumberAvailable -= 1;
         }
+
+        if (_input.GetShiftTrigger() && CanShift) {
+            _lastShiftUseTime = Time.time;
+
+            int trackNodesCount = GameState.Instance._trackNodes.Count;
+            TrackNode lastPassedTrackNode = GameState.Instance._trackNodes[(lastPassedWaypoint-1) % trackNodesCount];
+            TrackNode nextTrackNode = GameState.Instance._trackNodes[(lastPassedWaypoint) % trackNodesCount]; //TODO: handle last waypoint
+
+               Vector2 betweenLastPassedWaypointAndNextWaypoint = (nextTrackNode.transform.position - lastPassedTrackNode.transform.position).normalized;
+               Vector2 betweenPlayerAndPassedWaypoint = (gameObject.transform.position - lastPassedTrackNode.transform.position).normalized;
+               float angle = Vector2.Angle(betweenPlayerAndPassedWaypoint, betweenLastPassedWaypointAndNextWaypoint);
+                
+                float dist = (gameObject.transform.position - lastPassedTrackNode.transform.position).magnitude;
+
+                float angleDir = AngleDir(
+                    (gameObject.transform.position - lastPassedTrackNode.transform.position),
+                    (nextTrackNode.transform.position - lastPassedTrackNode.transform.position)
+                );
+
+                float rotateAngle = 2 * angle;
+                if (angleDir > 0f) {
+                    rotateAngle *= -1f;
+                }
+                Vector2 resultVector = Vector2Extension.Rotate(betweenPlayerAndPassedWaypoint, rotateAngle);
+                resultVector = resultVector * dist;
+                Vector3 resultVector3 = new Vector3(resultVector.x, resultVector.y, gameObject.transform.position.z);
+                
+                float oldZ = gameObject.transform.position.z;
+                
+                Vector3 newPosition = resultVector3 + lastPassedTrackNode.transform.position;
+                newPosition = new Vector3(newPosition.x, newPosition.y, oldZ);
+
+                StartCoroutine(Scale(newPosition));
+        }
+    }
+
+    private System.Collections.IEnumerator Scale(Vector3 newPosition)
+     {
+         float growFactor = 10f;
+         float waitTime = 0.01f;
+
+             while(0f < transform.localScale.x)
+             {
+                 transform.localScale -= new Vector3(1, 1, 1) * Time.deltaTime * growFactor;
+                 yield return null;
+             }
+
+            gameObject.transform.position = newPosition;
+ 
+             while(1f > transform.localScale.x)
+             {
+                 transform.localScale += new Vector3(1, 1, 1) * Time.deltaTime * growFactor;
+                 yield return null;
+             }
+    }
+
+    public static float AngleDir(Vector2 A, Vector2 B) {
+        return -A.x * B.y + A.y * B.x;
     }
 
 	public bool CanDash {
 		get {
 			return Time.time - _lastDashUseTime >= DASH_COOLDOWN && _dashNumberAvailable > 0;
+		}
+	}
+
+    public bool CanShift {
+		get {
+			return Time.time - _lastShiftUseTime >= DASH_COOLDOWN;
 		}
 	}
 
@@ -317,6 +398,10 @@ public class Player : MonoBehaviour {
 
     void LaunchMine(Vector2 direction, Mine.MineTypes mineType) {
         if (!_collectedMines.Exists(mineType)) {
+            return;
+        }
+
+        if (direction.magnitude < 1) {
             return;
         }
 
@@ -408,6 +493,11 @@ public class Player : MonoBehaviour {
             UpdateInternals();
         }
 
+        if (_collectedMines.Count() < GameState.Instance.MaxMinesBeforeExplosion && _lastSpeedFullyCollectedTime > 0f) {
+            _lastSpeedFullyCollectedTime = 0f;
+            UpdateInternals();
+        }
+
         if (_lastSpeedFullyCollectedTime > 0f && Time.time - _lastSpeedFullyCollectedTime >= DASH_COOLDOWN * 3f) {
             _collectedMines.Clear();
             _lastSpeedFullyCollectedTime = 0f;
@@ -427,7 +517,6 @@ public class Player : MonoBehaviour {
         }
 
         if (_dashNumberAvailable < INITIAL_NUMBER_OF_DASHES && Time.time - _dashGenerationTimer + delta >= DASH_COOLDOWN * delta) { //TODO
-            Debug.Log(" + 1 Dash!");
             _dashNumberAvailable += 1;
             _dashGenerationTimer = 0f;
         }
